@@ -30,7 +30,7 @@ function drawParallelCoordinates(data) {
             .attr("text-anchor", "middle")
             .text(dim)
             .style("font-size", "12px")
-            .style("fill", "black");
+            .style("fill", "#6F6F79");
     });
 
     // Create lines and labels for each row of data
@@ -45,19 +45,9 @@ function drawParallelCoordinates(data) {
                     return [x(dim), yScales[i](+row[dim])];
                 })
             ))
-            .attr("stroke", "steelblue")
+            .attr("stroke", "#177991")
             .attr("fill", "none")
             .attr("opacity", 0.5);
-
-        // Add labels for the rows (optional)
-        // line.append("text")
-        //     .attr("x", x(dimensions[0]))  // Position at the first axis
-        //     .attr("y", yScales[0](+row[dimensions[0]]))
-        //     .attr("dy", -5)  // Adjust this to space the label from the line
-        //     .attr("text-anchor", "middle")
-        //     .text(rowIndex)  // Using row index as label (could be any row value)
-        //     .style("font-size", "10px")
-        //     .style("fill", "black");
 
         // Add hover interaction (mouseover/mouseout)
         path.on("mouseover", function(event, d) {
@@ -66,7 +56,7 @@ function drawParallelCoordinates(data) {
         })
         .on("mouseout", function(event, d) {
             // Reset line color
-            d3.select(this).attr("stroke", "steelblue").attr("stroke-width", 1);
+            d3.select(this).attr("stroke", "#177991").attr("stroke-width", 1);
         });
     });
 }
