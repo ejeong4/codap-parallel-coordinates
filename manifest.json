@@ -1,6 +1,9 @@
 {
     "name": "Parallel Coordinates",
     "version": "1.0",
-    "dimensions": { "width": 800, "height": 500 },
+    "dimensions": {
+        "width": 1000,
+        "height": 1000
+    },
     "scriptPath": "script.js"
 }
