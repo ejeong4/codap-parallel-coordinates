@@ -5,7 +5,7 @@ const codapInterface = {
             resource: "interactiveFrame",
             values: {
                 name: "Parallel Coordinates",
-                dimensions: { width: 800, height: 500 }
+                dimensions: { width: 1000, height: 1000 }
             }
         });
     },
