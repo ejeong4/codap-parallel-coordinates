@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CODAP Parallel Coordinates Plugin</title>
+
+    <script src="iframe-phone.js"></script>
+    <script src="codapInterface.js"></script>
+    <script src="pluginHelper.js"></script>
     
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="https://codap.concord.org/releases/latest/common/js/codapInterface.js"></script>
@@ -27,6 +31,15 @@
     <button onclick="handleFileUpload()">Upload CSV</button>
     <div id="chart"></div>
 </body>
+
+<script type="module">
+    import {initialize} from "./script.js"
+
+    window.onload = function () {
+        initialize();
+    }
+</script>
+
 </html>
 
 
