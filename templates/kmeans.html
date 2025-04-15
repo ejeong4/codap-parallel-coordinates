@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Means Clustering</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/styles.css">
+</head>
+<body>
+    <h1>Data Visualization</h1>
+    <form id="upload-form" enctype="multipart/form-data">
+        <label for="csv_file">Upload CSV:</label>
+        <input type="file" id="csv_file" name="csv_file" accept=".csv" required>
+        <button type="submit">Run K-Means</button>
+    </form>
+
+    <!-- Algorithm selection dropdown -->
+    <label for="algorithmSelect">Select Visualization Algorithm</label>
+    <select id="algorithmSelect">
+        <option value="kmeans">K-Means</option>
+        <option value="parallelCoordinates">Parallel Coordinates</option>
+    </select>
+
+    <div>
+        <label for="x-feature">X-axis:</label>
+        <select id="x-feature"></select>
+
+        <label for="y-feature">Y-axis:</label>
+        <select id="y-feature"></select>
+    </div>
+
+    <div id="chart"></div>
+
+    <canvas id="clusterChart" width="600" height="400"></canvas>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='parallelCoordinates.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
+
