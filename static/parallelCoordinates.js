@@ -1,4 +1,7 @@
-function drawParallelCoordinates(data) {
+export function drawParallelCoordinates(data) {
+    console.log("Sample row:", data[0]);
+    console.log("Keys from data[0]:", Object.keys(data[0]));
+
     d3.select("#chart").selectAll("*").remove();  // Clear previous charts
 
     let dimensions = Object.keys(data[0]);

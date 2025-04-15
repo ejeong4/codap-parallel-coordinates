@@ -15,32 +15,37 @@
     <form id="upload-form" enctype="multipart/form-data">
         <label for="csv_file">Upload CSV:</label>
         <input type="file" id="csv_file" name="csv_file" accept=".csv" required>
-        <button type="submit">Run K-Means</button>
+        <button type="submit">Upload</button>
     </form>
 
-    <!-- Algorithm selection dropdown -->
-    <label for="algorithmSelect">Select Visualization Algorithm</label>
-    <select id="algorithmSelect">
-        <option value="kmeans">K-Means</option>
-        <option value="parallelCoordinates">Parallel Coordinates</option>
-    </select>
+    <!-- K-Means Section -->
+    <div class="section">
+        <h2>K-Means Clustering</h2>
 
-    <div>
-        <label for="x-feature">X-axis:</label>
+        <!-- Feature selection for K-Means clustering -->
+        <label for="x-feature">Select X Feature</label>
         <select id="x-feature"></select>
 
-        <label for="y-feature">Y-axis:</label>
+        <label for="y-feature">Select Y Feature</label>
         <select id="y-feature"></select>
+
+        <br><br>
+
+        <!-- K-Means Scatter Plot -->
+        <canvas id="clusterChart"></canvas>
     </div>
 
-    <div id="chart"></div>
+    <!-- Parallel Coordinates Section -->
+    <div class="section">
+        <h2>Parallel Coordinates</h2>
+        <!-- Chart for Parallel Coordinates -->
+        <div id="chart"></div>
+    </div>
 
-    <canvas id="clusterChart" width="600" height="400"></canvas>
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="{{ url_for('static', filename='parallelCoordinates.js') }}"></script>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
 
