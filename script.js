@@ -126,7 +126,10 @@ function setupDropTargets() {
   const y = {};
   for (let dim of dimensions) {
     y[dim] = d3.scaleLinear()
-      .domain(d3.extent(dataset, d => +d[dim]))
+    .domain([
+      d3.quantile(dataset.map(d => +d[dim]).sort(d3.ascending), 0.05),
+      d3.quantile(dataset.map(d => +d[dim]).sort(d3.ascending), 0.95)
+    ])
       .range([height - 20, 20]);
   }
 
