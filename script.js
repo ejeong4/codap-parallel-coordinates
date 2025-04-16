@@ -145,7 +145,7 @@ function setupDropTargets() {
     .attr("class", "line")
     .attr("d", d3.line()(dimensions.map((dim, i) => [x(dim), y[dim](centroid[i])])))
     .style("fill", "none")
-    .style("stroke", "blue")
+    .style("stroke", "#177991")
     .style("stroke-width", 3);
 
   svg.selectAll(".dimension")

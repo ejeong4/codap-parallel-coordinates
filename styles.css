@@ -3,9 +3,9 @@
     display: flex; flex-wrap: wrap; gap: 5px; 
 }
     
-.feature-tag {
-    border: 1px solid green; border-radius: 10px; padding: 2px 10px; cursor: pointer;
-}
+/* .feature-tag {
+    border: 1px solid #00812E; border-radius: 10px; padding: 2px 10px; cursor: pointer;
+} */
     
 .selected-slot { 
     margin: 5px 0; 
@@ -18,16 +18,17 @@
 }
 
 .drop-slot {
-  border: 2px dashed #aaa;
-  padding: 10px;
-  border-radius: 8px;
+  padding: 12px;
+    border: 1.5px dashed #D9D9D9;
+    border-radius: 16px;
+    color: #6F6F79;
   min-width: 180px;
-  background-color: #f9f9f9;
+  background-color: #F5F5F5;
 }
 
 .drop-slot.dragover {
-  background-color: #e0ffe0;
-  border-color: green;
+  background-color: #edf5df;
+  border-color: #00812E;
 }
 
 .feature-list {
@@ -37,11 +38,11 @@
 }
 
 .feature-tag {
-  border: 1px solid green;
-  border-radius: 10px;
-  padding: 6px 10px;
+  border: 1px solid #A5BC7D;
+  border-radius: 16px;
+  padding: 6px 12px;
   cursor: grab;
-  background-color: #e8f8e8;
+  background-color: #edf5df;
   user-select: none;
 }
 
@@ -52,7 +53,7 @@ body {
     padding: 15px;
 }
 
-h1 {
+h1, h2 {
     color: #177991;
     font-weight: 600;
     font-size: 1.5em;
@@ -61,6 +62,10 @@ h1 {
 p, input {
     color: #6F6F79;
     font-family: "Hanken Grotesk", sans-serif;
+}
+
+h3 {
+  font-weight: 600;
 }
 
 button {
@@ -80,6 +85,7 @@ button {
 }
 
 input[type="file"] {
+  margin-top: 16px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -90,6 +96,12 @@ input[type="file"] {
     border-radius: 16px;
     color: #6F6F79;
     cursor: pointer;
+}
+
+input[type="file"] input#file-upload-button{
+  stroke: 1px solid #E9EAED;
+  border-radius: 16px;
+  padding: 12px;
 }
 
 #parallel-coords {
@@ -103,3 +115,16 @@ input[type="file"] {
     cursor: pointer;
     padding: 15px 15px 10px 15px;
 }
+
+.explain {
+  padding: 16px;
+  width: 400px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  background-color: #F5F5F5;
+  border-radius: 16px;
+  color: #6F6F79;
+}
+

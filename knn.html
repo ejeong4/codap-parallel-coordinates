@@ -54,7 +54,7 @@
       border-radius: 5px;
       cursor: pointer;
     }
-    select, input[type="range"] {
+    select, input[type="range"], input[type="file"] {
       margin-top: 5px;
     }
   </style>
@@ -63,26 +63,25 @@
   <div class="container">
     <div class="title-row">
       <h2>Make a Prediction</h2>
-      <button onclick="deletePair()">X Delete</button>
     </div>
 
-    <label for="glyphType">Choose a glyph type:</label>
+    <!-- <label for="glyphType">Choose a glyph type:</label>
     <select id="glyphType">
       <option value="parallel">Parallel Coordinate</option>
-    </select>
+    </select> -->
 
     <div class="slider-section">
       <p>K value for KNN - How many neighbors would you like to use?</p>
       <input type="range" id="kSlider" min="1" max="14" value="2" oninput="updateKValue(this.value)">
-      <div class="confidence-values" id="confidenceValues">
-        <!-- Confidence values inserted by JS -->
-      </div>
+      <div class="confidence-values" id="confidenceValues"></div>
     </div>
+
+    <p>Upload a CSV file (include a "label" column for known points, and leave "label" blank for unknowns):</p>
+    <input type="file" accept=".csv" onchange="handleFileUpload(event)">
 
     <div class="glyphs-section">
       <p>Click to choose an unknown data point below</p>
-      <div class="glyphs" id="glyphs">
-      </div>
+      <div class="glyphs" id="glyphs"></div>
     </div>
 
     <button onclick="predictKNN()">Predict this unknown data point with KNN</button>
@@ -90,17 +89,11 @@
 
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script>
-    const dataset = [
-      { yield: 0.2, Homespun: 0.3, Bumbles: 0.4, Andrews: 0.5 },
-      { yield: 0.5, Homespun: 0.6, Bumbles: 0.3, Andrews: 0.4 },
-      { yield: 0.4, Homespun: 0.2, Bumbles: 0.5, Andrews: 0.6 },
-      { yield: 0.3, Homespun: 0.5, Bumbles: 0.6, Andrews: 0.2 }
-    ];
-  
-    const featureNames = ["yield", "Homespun", "Bumbles", "Andrews"];
+    let dataset = [];
+    let featureNames = [];
     let selectedGlyphIndex = null;
     let selectedK = 2;
-  
+
     function updateKValue(k) {
       selectedK = parseInt(k);
       const container = document.getElementById("confidenceValues");
@@ -113,85 +106,151 @@
         container.appendChild(div);
       }
     }
-  
+
     function drawGlyphs() {
       const container = document.getElementById("glyphs");
-      container.innerHTML = ""; // Clear previous glyphs
+      container.innerHTML = "";
       dataset.forEach((d, i) => {
         const div = document.createElement("div");
         div.className = "glyph-container";
         div.dataset.index = i;
-  
+
         const svg = d3.select(div).append("svg")
           .attr("width", 120)
           .attr("height", 100);
-  
-        const values = featureNames.map(f => d[f]);
-  
-        const xScale = d3.scalePoint()
-          .domain(featureNames)
-          .range([10, 110]);
-  
-        const yScale = d3.scaleLinear()
-          .domain([0, 1])
-          .range([90, 10]);
-  
-        svg.append("path")
-          .datum(values)
-          .attr("fill", "none")
-          .attr("stroke", "black")
-          .attr("stroke-width", 1.5)
-          .attr("d", d3.line()
+
+        const values = featureNames.map(f => {
+          const v = parseFloat(d[f]);
+          return isNaN(v) ? null : v;
+        });
+
+        // If any feature is missing, don’t draw the glyph path
+        if (values.includes(null)) {
+          // Optionally add a fallback for visual indicator
+            svg.append("text")
+            .attr("x", 60)
+            .attr("y", 50)
+            .attr("text-anchor", "middle")
+            .attr("fill", "gray")
+            .text("Incomplete");
+        } else {
+          svg.append("path")
+            .datum(values)
+            .attr("fill", "none")
+            .attr("stroke", d.label ? "black" : "orange")
+            .attr("stroke-width", 1.5)
+            .attr("d", d3.line()
             .x((d, i) => xScale(featureNames[i]))
             .y(d => yScale(d))
           );
-  
-        svg.selectAll("text")
-          .data(featureNames)
-          .enter()
-          .append("text")
-          .attr("x", d => xScale(d))
-          .attr("y", 95)
-          .attr("text-anchor", "middle")
-          .attr("font-size", "8px")
-          .text(d => d);
-  
+        }
+        
+        const xScale = d3.scalePoint()
+          .domain(featureNames)
+          .range([10, 110]);
+
+        const yScale = d3.scaleLinear()
+          .domain([0, 1])
+          .range([90, 10]);
+
+        // svg.append("path")
+        //   .datum(values)
+        //   .attr("fill", "none")
+        //   .attr("stroke", d.label ? "black" : "orange")
+        //   .attr("stroke-width", 1.5)
+        //   .attr("d", d3.line()
+        //     .x((d, i) => xScale(featureNames[i]))
+        //     .y(d => yScale(d))
+        //   );
+
+        // svg.selectAll("text")
+        //   .data(featureNames)
+        //   .enter()
+        //   .append("text")
+        //   .attr("x", d => xScale(d))
+        //   .attr("y", 95)
+        //   .attr("text-anchor", "middle")
+        //   .attr("font-size", "8px")
+        //   .text(d => d);
+
         div.onclick = () => {
+          if (d.label) return; // only allow selecting unknowns
           document.querySelectorAll(".glyph-container").forEach(e => e.classList.remove("selected"));
           div.classList.add("selected");
           selectedGlyphIndex = parseInt(div.dataset.index);
         };
-  
+
         container.appendChild(div);
       });
     }
-  
+
     function predictKNN() {
       if (selectedGlyphIndex === null) {
-        alert("Please select a glyph before predicting.");
+        alert("Please select an unknown data point.");
         return;
       }
-  
-      const selectedPoint = dataset[selectedGlyphIndex];
-      const predictedLabel = ["Class A", "Class B", "Class C"][Math.floor(Math.random() * 3)];
-  
-      alert(`Predicting for glyph #${selectedGlyphIndex + 1} using K=${selectedK}... ➜ Prediction: ${predictedLabel}`);
+
+      const unknownPoint = dataset[selectedGlyphIndex];
+      const knownPoints = dataset.filter(d => d.label && d.label !== "");
+
+      const distances = knownPoints.map((point, index) => {
+        const dist = Math.sqrt(featureNames.reduce((sum, f) => {
+          return sum + Math.pow(parseFloat(point[f]) - parseFloat(unknownPoint[f]), 2);
+        }, 0));
+        return { dist, label: point.label };
+      });
+
+      distances.sort((a, b) => a.dist - b.dist);
+      const kNearest = distances.slice(0, selectedK);
+      const labelCounts = {};
+
+      kNearest.forEach(neighbor => {
+        labelCounts[neighbor.label] = (labelCounts[neighbor.label] || 0) + 1;
+      });
+
+      const predictedLabel = Object.entries(labelCounts).sort((a, b) => b[1] - a[1])[0][0];
+
+      alert(`Predicting for glyph #${selectedGlyphIndex + 1} using K=${selectedK} ➜ Prediction: ${predictedLabel}`);
     }
-  
-    function deletePair() {
-      if (selectedGlyphIndex === null) {
-        alert("Please select a glyph to delete.");
-        return;
-      }
-  
-      dataset.splice(selectedGlyphIndex, 1); 
-      selectedGlyphIndex = null;
-      drawGlyphs(); 
-    }
-  
-    updateKValue(selectedK);
+
+    function handleFileUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const text = e.target.result;
+    const rows = text.trim().split("\n");
+    const headers = rows[0].split(",");
+    featureNames = headers.filter(h => h !== "label");
+
+    dataset = rows.slice(1).map(row => {
+      const values = row.split(",");
+      const obj = {};
+      headers.forEach((h, i) => {
+        obj[h] = h === "label" ? values[i].trim() : parseFloat(values[i]);
+      });
+      return obj;
+    });
+
+    // Normalize features to [0, 1] range
+    featureNames.forEach(feature => {
+      const values = dataset.map(d => d[feature]).filter(v => !isNaN(v));
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+      dataset.forEach(d => {
+        if (!isNaN(d[feature])) {
+          d[feature] = (d[feature] - min) / (max - min);
+        }
+      });
+    });
+
     drawGlyphs();
+  };
+  reader.readAsText(file);
+}
+
+    updateKValue(selectedK);
   </script>
-  
 </body>
 </html>
