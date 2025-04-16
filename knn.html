@@ -82,7 +82,6 @@
     <div class="glyphs-section">
       <p>Click to choose an unknown data point below</p>
       <div class="glyphs" id="glyphs">
-        <!-- Mini parallel coordinate plots go here -->
       </div>
     </div>
 
@@ -108,7 +107,7 @@
       container.innerHTML = "";
       for (let i = 1; i <= 14; i++) {
         const div = document.createElement("div");
-        div.textContent = (Math.random().toFixed(2)); // fake confidence
+        div.textContent = (Math.random().toFixed(2));
         div.style.color = i == k ? "#ffcc00" : "#333";
         div.style.fontWeight = i == k ? "bold" : "normal";
         container.appendChild(div);
@@ -174,7 +173,6 @@
       }
   
       const selectedPoint = dataset[selectedGlyphIndex];
-      // Placeholder: fake prediction
       const predictedLabel = ["Class A", "Class B", "Class C"][Math.floor(Math.random() * 3)];
   
       alert(`Predicting for glyph #${selectedGlyphIndex + 1} using K=${selectedK}... ➜ Prediction: ${predictedLabel}`);
@@ -186,12 +184,11 @@
         return;
       }
   
-      dataset.splice(selectedGlyphIndex, 1);  // Remove from dataset
+      dataset.splice(selectedGlyphIndex, 1); 
       selectedGlyphIndex = null;
-      drawGlyphs(); // Redraw updated glyphs
+      drawGlyphs(); 
     }
   
-    // Initial render
     updateKValue(selectedK);
     drawGlyphs();
   </script>

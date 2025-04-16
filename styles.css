@@ -94,9 +94,8 @@ input[type="file"] {
 
 #parallel-coords {
     width: 400px;
- /* Adjust as needed */
-    margin-top: 20px;  /* Add some margin to the top */
-    overflow: visible; /* Allow the content to overflow if necessary */
+    margin-top: 20px;  
+    overflow: visible;
     position: relative;
     border: 1.5px solid #D9D9D9;
     border-radius: 16px;

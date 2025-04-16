@@ -93,7 +93,6 @@ function setupDropTargets() {
           return clusterIndex;
         });
   
-        // Recalculate centroids
         const newCentroids = Array.from({ length: k }, () =>
           Array(dimensions.length).fill(0)
         );
@@ -135,14 +134,12 @@ function setupDropTargets() {
     .range([20, width - 20])
     .domain(dimensions);
 
-  // Compute the global centroid (mean of all selected features)
   const centroid = dimensions.map(dim => {
     const values = dataset.map(d => +d[dim]);
     const mean = d3.mean(values);
     return mean;
   });
 
-  // Draw the centroid line
   svg.append("path")
     .datum(centroid)
     .attr("class", "line")
@@ -151,7 +148,6 @@ function setupDropTargets() {
     .style("stroke", "blue")
     .style("stroke-width", 3);
 
-  // Draw the axes
   svg.selectAll(".dimension")
     .data(dimensions)
     .enter().append("g")
