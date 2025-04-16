@@ -93,7 +93,7 @@ input[type="file"] {
 }
 
 #parallel-coords {
-    width: 600px;
+    width: 400px;
  /* Adjust as needed */
     margin-top: 20px;  /* Add some margin to the top */
     overflow: visible; /* Allow the content to overflow if necessary */
@@ -102,6 +102,5 @@ input[type="file"] {
     border-radius: 16px;
     color: #6F6F79;
     cursor: pointer;
-    padding: 30px;
+    padding: 15px 15px 10px 15px;
 }
-
