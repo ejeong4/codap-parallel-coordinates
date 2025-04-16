@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Parallel Coordinates + KNN Interface</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      padding: 20px;
+    }
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      max-width: 1200px;
+      margin: auto;
+    }
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .slider-section, .glyphs-section {
+      margin-top: 20px;
+    }
+    .confidence-values {
+      display: flex;
+      gap: 10px;
+      margin-top: 5px;
+    }
+    .glyphs {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      margin-top: 10px;
+    }
+    .glyph-container {
+      border: 2px solid #ccc;
+      padding: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .glyph-container.selected {
+      border-color: green;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    select, input[type="range"] {
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="title-row">
+      <h2>Make a Prediction</h2>
+      <button onclick="deletePair()">X Delete</button>
+    </div>
+
+    <label for="glyphType">Choose a glyph type:</label>
+    <select id="glyphType">
+      <option value="parallel">Parallel Coordinate</option>
+    </select>
+
+    <div class="slider-section">
+      <p>K value for KNN - How many neighbors would you like to use?</p>
+      <input type="range" id="kSlider" min="1" max="14" value="2" oninput="updateKValue(this.value)">
+      <div class="confidence-values" id="confidenceValues">
+        <!-- Confidence values inserted by JS -->
+      </div>
+    </div>
+
+    <div class="glyphs-section">
+      <p>Click to choose an unknown data point below</p>
+      <div class="glyphs" id="glyphs">
+        <!-- Mini parallel coordinate plots go here -->
+      </div>
+    </div>
+
+    <button onclick="predictKNN()">Predict this unknown data point with KNN</button>
+  </div>
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script>
+    const dataset = [
+      { yield: 0.2, Homespun: 0.3, Bumbles: 0.4, Andrews: 0.5 },
+      { yield: 0.5, Homespun: 0.6, Bumbles: 0.3, Andrews: 0.4 },
+      { yield: 0.4, Homespun: 0.2, Bumbles: 0.5, Andrews: 0.6 },
+      { yield: 0.3, Homespun: 0.5, Bumbles: 0.6, Andrews: 0.2 }
+    ];
+  
+    const featureNames = ["yield", "Homespun", "Bumbles", "Andrews"];
+    let selectedGlyphIndex = null;
+    let selectedK = 2;
+  
+    function updateKValue(k) {
+      selectedK = parseInt(k);
+      const container = document.getElementById("confidenceValues");
+      container.innerHTML = "";
+      for (let i = 1; i <= 14; i++) {
+        const div = document.createElement("div");
+        div.textContent = (Math.random().toFixed(2)); // fake confidence
+        div.style.color = i == k ? "#ffcc00" : "#333";
+        div.style.fontWeight = i == k ? "bold" : "normal";
+        container.appendChild(div);
+      }
+    }
+  
+    function drawGlyphs() {
+      const container = document.getElementById("glyphs");
+      container.innerHTML = ""; // Clear previous glyphs
+      dataset.forEach((d, i) => {
+        const div = document.createElement("div");
+        div.className = "glyph-container";
+        div.dataset.index = i;
+  
+        const svg = d3.select(div).append("svg")
+          .attr("width", 120)
+          .attr("height", 100);
+  
+        const values = featureNames.map(f => d[f]);
+  
+        const xScale = d3.scalePoint()
+          .domain(featureNames)
+          .range([10, 110]);
+  
+        const yScale = d3.scaleLinear()
+          .domain([0, 1])
+          .range([90, 10]);
+  
+        svg.append("path")
+          .datum(values)
+          .attr("fill", "none")
+          .attr("stroke", "black")
+          .attr("stroke-width", 1.5)
+          .attr("d", d3.line()
+            .x((d, i) => xScale(featureNames[i]))
+            .y(d => yScale(d))
+          );
+  
+        svg.selectAll("text")
+          .data(featureNames)
+          .enter()
+          .append("text")
+          .attr("x", d => xScale(d))
+          .attr("y", 95)
+          .attr("text-anchor", "middle")
+          .attr("font-size", "8px")
+          .text(d => d);
+  
+        div.onclick = () => {
+          document.querySelectorAll(".glyph-container").forEach(e => e.classList.remove("selected"));
+          div.classList.add("selected");
+          selectedGlyphIndex = parseInt(div.dataset.index);
+        };
+  
+        container.appendChild(div);
+      });
+    }
+  
+    function predictKNN() {
+      if (selectedGlyphIndex === null) {
+        alert("Please select a glyph before predicting.");
+        return;
+      }
+  
+      const selectedPoint = dataset[selectedGlyphIndex];
+      // Placeholder: fake prediction
+      const predictedLabel = ["Class A", "Class B", "Class C"][Math.floor(Math.random() * 3)];
+  
+      alert(`Predicting for glyph #${selectedGlyphIndex + 1} using K=${selectedK}... ➜ Prediction: ${predictedLabel}`);
+    }
+  
+    function deletePair() {
+      if (selectedGlyphIndex === null) {
+        alert("Please select a glyph to delete.");
+        return;
+      }
+  
+      dataset.splice(selectedGlyphIndex, 1);  // Remove from dataset
+      selectedGlyphIndex = null;
+      drawGlyphs(); // Redraw updated glyphs
+    }
+  
+    // Initial render
+    updateKValue(selectedK);
+    drawGlyphs();
+  </script>
+  
+</body>
+</html>
