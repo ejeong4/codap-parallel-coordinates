@@ -113,7 +113,7 @@ input[type="file"] input#file-upload-button{
     border-radius: 16px;
     color: #6F6F79;
     cursor: pointer;
-    padding: 15px 15px 10px 15px;
+    padding: 15px 30px 10px 30px;
 }
 
 .explain {
