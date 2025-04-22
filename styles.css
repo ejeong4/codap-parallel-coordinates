@@ -144,7 +144,8 @@ select  {
 .cluster-options {
   display: flex;
   background-color: #F5F5F5;
-  width: fit-content;
+  width: 100%;
+  justify-content: space-between;
   margin: 8px 0;
   border-radius: 12px;
   gap: 6px;
@@ -194,6 +195,7 @@ button {
 }
 
 input[type="file"] {
+  width:98%;
     margin-top: 16px;
     display: flex;
     flex-direction: column;
@@ -235,7 +237,7 @@ input[type="file"] input#file-upload-button {
 
 .explain {
     padding: 16px;
-    width: 400px;
+    /* width: 400px; */
     display: flex;
     flex-direction: row;
     align-items: center;
