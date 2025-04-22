@@ -75,13 +75,28 @@ canvas {
 }
 
 .selected {
-    font-weight: bold;
-    background: #cce;
+    background: #6F6F79;
+    color: #F5F5F5;
+    /* padding: 8px; */
 }
 
-.cluster-options span {
-    margin-right: 10px;
+.cluster-options span{
+    /* margin-right: 10px; */
     cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 12px;
+    
+}
+
+.cluster-options {
+  display: flex;
+  background-color: #F5F5F5;
+  width: fit-content;
+  margin: 8px 0;
+  border-radius: 12px;
+  gap: 6px;
+  color: #6F6F79;
+  font-weight: 600;
 }
 
 h1,
