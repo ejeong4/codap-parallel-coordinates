@@ -195,7 +195,7 @@ button {
 }
 
 input[type="file"] {
-  width:98%;
+  width:90%;
     margin-top: 16px;
     display: flex;
     flex-direction: column;
