@@ -80,7 +80,18 @@ canvas {
     /* padding: 8px; */
 }
 
-select {
+input::file-selector-button {
+  color: black;
+  background-color: white;
+  padding: 8px;
+  border-radius: 12px;
+  margin-right: 8px;
+  border: 1px solid #E9EAED;
+  box-shadow: 2px 2px 5px -4px #00000020;
+  font-family: "Hanken Grotesk", sans-serif;
+}
+
+select  {
   padding: 12px;
   border: 1px solid #E9EAED;
   border-radius: 16px;
@@ -132,11 +143,11 @@ h3 {
 
 button {
     background-color: #177991;
-    width: 120px;
+    width: fit-content;
     color: white;
     border: none;
-    border-radius: 16px;
-    padding: 8px;
+    border-radius: 12px;
+    padding: 12px 30px;
     font-size: 1em;
     margin-top: 20px;
     cursor: pointer;
@@ -144,6 +155,8 @@ button {
     display: flex;
     justify-content: center;
     font-family: "Hanken Grotesk", sans-serif;
+    font-weight: 600;
+    font-size: 1.1em;
 }
 
 input[type="file"] {
