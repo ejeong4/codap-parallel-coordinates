@@ -80,6 +80,14 @@ canvas {
     /* padding: 8px; */
 }
 
+select {
+  padding: 12px;
+  border: 1px solid #E9EAED;
+  border-radius: 16px;
+  box-shadow: 2px 2px 5px -4px #00000020;
+  font-family: "Hanken Grotesk", sans-serif;
+}
+
 .cluster-options span{
     /* margin-right: 10px; */
     cursor: pointer;
