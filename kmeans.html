@@ -11,10 +11,13 @@
 </head>
 <body>
   <h2>Automatic Clustering</h2>
-  <label><input type="file" id="csvInput" accept=".csv" /></label>
-  <br><br>
+  <div class="explain">
+    <img src="icons/zoom-in.svg" alt="">
+    Automatic Clustering is a way for computers to organize information into groups, or "clusters," based on how similar the items are. </div>
+  <div class="content">
+  <label><h3>Import Data</h3><input type="file" id="csvInput" accept=".csv" /></label>
   <div>
-    Split the dataset into:
+    <h3>Split the dataset into:</h3>
     <div class="cluster-options">
       <span data-k="2">2 clusters</span>
       <span data-k="3">3 clusters</span>
@@ -22,15 +25,13 @@
       <span data-k="5">5 clusters</span>
     </div>
   </div>
-  <br>
   <label>
-    Choose a glyph type:
+    <h3>Choose graph type:</h3>
     <select id="glyphSelect">
       <option value="parallel">Parallel Coordinate</option>
     </select>
     <button onclick="render()">Expand</button>
   </label>
-  <br><br>
   <div id="charts"></div>
 
   <script>
