@@ -101,6 +101,38 @@ select  {
   font-family: "Hanken Grotesk", sans-serif;
 }
 
+.option {
+  cursor: pointer;
+
+  border: 1px solid #E9EAED;
+  border-radius: 16px;
+  box-shadow: 2px 2px 5px -4px #00000020;
+  font-family: "Hanken Grotesk", sans-serif;
+  background-color: white;
+  width: 80px;
+  flex: 1;
+      padding: 1rem;
+      text-align: center;
+}
+
+.option:hover {
+  border: 1px solid #177991;
+  background-color: #EAF1FB;
+  color: #177991;
+}
+
+.option-buttons a {
+  text-decoration: none;
+  color: #54636F;
+  font-weight: 600;
+}
+
+.option-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
 .cluster-options span{
     /* margin-right: 10px; */
     cursor: pointer;
