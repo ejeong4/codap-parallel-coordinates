@@ -178,7 +178,7 @@ h3 {
 
 button {
     background-color: #177991;
-    width: fit-content;
+    width: 100%;
     color: white;
     border: none;
     border-radius: 12px;
