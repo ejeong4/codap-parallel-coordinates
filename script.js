@@ -161,6 +161,4 @@ function setupDropTargets() {
     .text(d => d)
     .style("font-size", "12px")
     .style("fill", "#6F6F79");
-
-    
 }

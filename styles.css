@@ -53,6 +53,27 @@ body {
     padding: 15px;
 }
 
+.cluster-canvas { 
+  margin: 10px 0; 
+}
+
+.cluster-svg {
+  border: 1px solid #eee;
+  background: white;
+}
+
+canvas { 
+  border: 1px solid #ccc; 
+}
+
+.selected { 
+  font-weight: bold; background: #cce; 
+}
+
+.cluster-options span { 
+  margin-right: 10px; cursor: pointer; 
+}
+
 h1, h2 {
     color: #177991;
     font-weight: 600;
@@ -104,12 +125,26 @@ input[type="file"] input#file-upload-button{
   padding: 12px;
 }
 
-#parallel-coords {
+#parallel-coords{
     width: 400px;
     margin-top: 20px;  
     overflow: visible;
     position: relative;
     border: 1.5px solid #D9D9D9;
+    border-radius: 16px;
+    color: #6F6F79;
+    cursor: pointer;
+    padding: 15px 30px 10px 30px;
+}
+
+#charts {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  flex-wrap: wrap;
+  width: 400px;
+  margin-top: 20px;  
+  border: 1.5px solid #D9D9D9;
     border-radius: 16px;
     color: #6F6F79;
     cursor: pointer;
