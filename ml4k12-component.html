@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ML4K12 Interactive Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+
+  <h2>ML4K12: Machine Learning Components</h2>
+
+  <div style="margin-bottom: 20px;">
+    <label> 
+      <h3>Import Data</h3>
+      <p>Choose a dataset with multiple numerical variables for Feature Selection</p>
+      <input type="file" id="csvFileInput" accept=".csv">
+    </label>
+  </div>
+
+  <!-- Feature Selection -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection('featureSelection')">
+      Feature Selection
+      <span class="arrow" id="arrow-featureSelection">▶</span>
+    </div>
+    <div class="section-content" id="featureSelection">
+      <div class="explain">
+        <img src="icons/zoom-in.svg" alt="">
+        Feature Selection is a way to identify the most important variables, or "features," in a dataset that contribute to a specific outcome.
+      </div>
+
+      <svg id="parallel-coords" width="400" height="300"></svg>
+
+      <div style="display: flex; gap: 40px; margin-top: 6px; justify-content: space-between;">
+        <div style="flex: 1;">
+          <h3>Selected Features</h3>
+          <div id="selected-features" class="drop-column">
+            <div class="drop-slot" data-index="0">Feature 1: <span class="drop-label">Drop here</span></div>
+            <div class="drop-slot" data-index="1">Feature 2: <span class="drop-label">Drop here</span></div>
+            <div class="drop-slot" data-index="2">Feature 3: <span class="drop-label">Drop here</span></div>
+            <div class="drop-slot" data-index="3">Feature 4: <span class="drop-label">Drop here</span></div>
+            <div class="drop-slot" data-index="4">Feature 5: <span class="drop-label">Drop here</span></div>
+          </div>
+        </div>
+
+        <div style="flex: 1;">
+          <h3>Available Features</h3>
+          <div class="feature-list" id="feature-buttons"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Automatic Clustering -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection('automaticClustering')">
+      Automatic Clustering
+      <span class="arrow" id="arrow-automaticClustering">▶</span>
+    </div>
+    <div class="section-content" id="automaticClustering">
+      <div class="explain">
+        <img src="icons/zoom-in.svg" alt="">
+        Automatic Clustering is a way to organize information into groups, or "clusters," based on how similar the items are.
+      </div>
+
+      <div class="content">
+        <h3>Split the dataset into:</h3>
+        <div class="cluster-options">
+          <span data-k="2">2 clusters</span>
+          <span data-k="3">3 clusters</span>
+          <span data-k="4">4 clusters</span>
+          <span data-k="5">5 clusters</span>
+        </div>
+
+        <h3>Choose graph type:</h3>
+        <select id="glyphSelect">
+          <option value="parallel">Parallel Coordinate</option>
+        </select>
+        <button onclick="render()">Expand</button>
+
+        <div id="charts" style="margin-top: 20px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    function toggleSection(id) {
+      const section = document.getElementById(id);
+      const arrow = document.getElementById('arrow-' + id);
+      section.classList.toggle('active');
+      arrow.classList.toggle('open');
+      if (section.classList.contains('active')) {
+        section.style.display = 'block';
+      } else {
+        section.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
