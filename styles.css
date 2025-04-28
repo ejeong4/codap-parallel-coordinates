@@ -270,9 +270,16 @@ input[type="file"] input#file-upload-button {
   }
 
   .section-content {
-    padding: 15px;
-    display: none; /* collapsed initially */
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.5s ease, padding 0.5s ease;
+    padding: 0 15px; /* horizontal only when collapsed */
   }
+  .section-content.active {
+    max-height: 2000px; /* big enough to fit all content */
+    padding: 15px;
+  }
+  
 
   .section-content.active {
     display: block;

@@ -21,9 +21,12 @@ document.getElementById('csvFileInput').addEventListener('change', function(e) {
 
     renderFeatureButtons(rawHeaders);
 
-    alert("Dataset loaded! Now you can use both Feature Selection and Clustering.");
+    // alert("Dataset loaded! Now you can use both Feature Selection and Clustering.");
   };
+  openSection('featureSelection');
+  openSection('automaticClustering');
   reader.readAsText(file);
+
 });
 
 // === FEATURE SELECTION (Drag-Drop Feature Tags) ===
