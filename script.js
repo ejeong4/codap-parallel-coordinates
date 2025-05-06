@@ -6,6 +6,22 @@ let selectedFeatures = Array(5).fill(null);
 let k = 2;
 const maxFeatures = 5;
 
+function toggleSection(id) {
+  const section = document.getElementById(id);
+  const arrow = document.getElementById('arrow-' + id);
+  section.classList.toggle('active');
+  arrow.classList.toggle('open');
+}
+
+function openSection(id) {
+  const section = document.getElementById(id);
+  const arrow = document.getElementById('arrow-' + id);
+
+  section.classList.add('active');
+  section.style.display = 'block';
+  arrow.classList.add('open');
+}
+
 // === FILE UPLOAD ===
 document.getElementById('csvFileInput').addEventListener('change', function(e) {
   const file = e.target.files[0];
@@ -19,12 +35,15 @@ document.getElementById('csvFileInput').addEventListener('change', function(e) {
     rawHeaders = dataset.columns;                    
     rawData = dataset.map(row => rawHeaders.map(h => +row[h]));
 
-    renderFeatureButtons(rawHeaders);
+    if (document.getElementById('feature-buttons')) {
+      renderFeatureButtons(rawHeaders);
+    }
+    
 
     // alert("Dataset loaded! Now you can use both Feature Selection and Clustering.");
   };
-  openSection('featureSelection');
-  openSection('automaticClustering');
+  // openSection('featureSelection');
+  // openSection('automaticClustering');
   reader.readAsText(file);
 
 });
