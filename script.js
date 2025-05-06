@@ -40,7 +40,7 @@ document.getElementById('csvFileInput').addEventListener('change', function(e) {
     }
     
 
-    // alert("Dataset loaded! Now you can use both Feature Selection and Clustering.");
+    alert("Dataset loaded! Now you can use both Feature Selection and Clustering.");
   };
   // openSection('featureSelection');
   // openSection('automaticClustering');
