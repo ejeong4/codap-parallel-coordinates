@@ -115,20 +115,24 @@ function drawParallelCoordinates() {
     .range([20, width - 20])
     .domain(dimensions);
 
-  const centroid = dimensions.map(dim => {
-    const values = dataset.map(d => +d[dim]);
-    const mean = d3.mean(values);
-    return mean;
-  });
+    dataset.forEach(d => {
+      svg.append("path")
+        .datum(d)
+        .attr("d", d3.line()(dimensions.map(dim => [x(dim), y[dim](+d[dim])])))
+        .style("fill", "none")
+        .style("stroke", "#177991")
+        .style("stroke-width", 1)
+        .style("opacity", 0.3)
+        .on("mouseover", function() {
+          d3.select(this).style("stroke-width", 2).style("opacity", 1);
+        })
+        .on("mouseout", function() {
+          d3.select(this).style("stroke-width", 1).style("opacity", 0.3);
+        });
+    });
 
-  svg.append("path")
-    .datum(centroid)
-    .attr("class", "line")
-    .attr("d", d3.line()(dimensions.map((dim, i) => [x(dim), y[dim](centroid[i])])))
-    .style("fill", "none")
-    .style("stroke", "#177991")
-    .style("stroke-width", 3);
-
+    
+    
   svg.selectAll(".dimension")
     .data(dimensions)
     .enter().append("g")
