@@ -1,4 +1,3 @@
-// === GLOBAL VARIABLES ===
 let rawHeaders = [];
 let rawData = [];
 let dataset = [];
@@ -22,7 +21,6 @@ function openSection(id) {
   arrow.classList.add('open');
 }
 
-// === FILE UPLOAD ===
 document.getElementById('csvFileInput').addEventListener('change', function(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -42,13 +40,10 @@ document.getElementById('csvFileInput').addEventListener('change', function(e) {
 
     alert("Dataset loaded! Now you can use both Feature Selection and Clustering.");
   };
-  // openSection('featureSelection');
-  // openSection('automaticClustering');
   reader.readAsText(file);
 
 });
 
-// === FEATURE SELECTION (Drag-Drop Feature Tags) ===
 function renderFeatureButtons(features) {
   const container = document.getElementById('feature-buttons');
   container.innerHTML = '';
@@ -93,7 +88,6 @@ function setupDropTargets() {
   });
 }
 
-// === FEATURE SELECTION PARALLEL COORDINATES DRAWING ===
 function drawParallelCoordinates() {
   const svg = d3.select("#parallel-coords");
   svg.selectAll("*").remove();
@@ -148,7 +142,6 @@ function drawParallelCoordinates() {
     .style("fill", "#6F6F79");
 }
 
-// === MANUAL SELECT FEATURE FUNCTION (safe to keep) ===
 function selectFeature(feature) {
   if (selectedFeatures.includes(feature)) return;
   if (selectedFeatures.length >= maxFeatures) return;
@@ -159,7 +152,6 @@ function selectFeature(feature) {
   if (selectedFeatures.length >= 2) drawParallelCoordinates();
 }
 
-// === CLUSTERING SETUP ===
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.cluster-options span').forEach(span => {
     span.onclick = () => {
@@ -170,12 +162,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// === K-MEANS FOR CLUSTERING ===
 function kMeans(data, k) {
   const assignments = new Array(data.length);
   const means = [];
 
-  // Initialize random centroids
   for (let i = 0; i < k; i++) {
     means.push(data[Math.floor(Math.random() * data.length)]);
   }
@@ -184,7 +174,6 @@ function kMeans(data, k) {
   while (changed) {
     changed = false;
 
-    // Assign points
     for (let i = 0; i < data.length; i++) {
       const distances = means.map(m => euclidean(data[i], m));
       const minIndex = distances.indexOf(Math.min(...distances));
@@ -194,7 +183,6 @@ function kMeans(data, k) {
       }
     }
 
-    // Move means
     const sums = Array.from({ length: k }, () => Array(data[0].length).fill(0));
     const counts = Array(k).fill(0);
     for (let i = 0; i < data.length; i++) {
@@ -213,7 +201,6 @@ function kMeans(data, k) {
     }
   }
 
-  // Group by cluster
   const clustered = Array.from({ length: k }, () => []);
   for (let i = 0; i < data.length; i++) {
     clustered[assignments[i]].push(data[i]);
@@ -221,12 +208,10 @@ function kMeans(data, k) {
   return clustered;
 }
 
-// === EUCLIDEAN DISTANCE ===
 function euclidean(a, b) {
   return Math.sqrt(a.reduce((sum, val, i) => sum + (val - b[i]) ** 2, 0));
 }
 
-// === RENDER CLUSTERS ===
 function render() {
   if (!rawData.length) return alert('Please upload a CSV file first!');
   const clusters = kMeans(rawData, k);
@@ -248,7 +233,6 @@ function render() {
   });
 }
 
-// === PARALLEL COORDINATES FOR CLUSTERING ===
 function drawParallelCoordinatesD3(svgSelector, dataset, selectedFeatures) {
   const svg = d3.select(svgSelector);
   svg.selectAll("*").remove();
