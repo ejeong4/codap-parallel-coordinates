@@ -1,4 +1,3 @@
-// === GLOBAL VARIABLES ===
 let rawHeaders = [];
 let rawData = [];
 let dataset = [];
@@ -22,7 +21,6 @@ function openSection(id) {
   arrow.classList.add('open');
 }
 
-// === FILE UPLOAD ===
 document.getElementById('csvFileInput').addEventListener('change', function(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -146,7 +144,6 @@ function drawParallelCoordinates() {
     .style("fill", "#6F6F79");
 }
 
-// === MANUAL SELECT FEATURE FUNCTION (safe to keep) ===
 function selectFeature(feature) {
   if (selectedFeatures.includes(feature)) return;
   if (selectedFeatures.length >= maxFeatures) return;
@@ -157,7 +154,6 @@ function selectFeature(feature) {
   if (selectedFeatures.length >= 2) drawParallelCoordinates();
 }
 
-// === CLUSTERING SETUP ===
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.cluster-options span').forEach(span => {
     span.onclick = () => {
@@ -168,7 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// === K-MEANS FOR CLUSTERING ===
 function kMeans(data, k) {
   const assignments = new Array(data.length);
   const means = [];
@@ -219,7 +214,6 @@ function kMeans(data, k) {
   return clustered;
 }
 
-// === EUCLIDEAN DISTANCE ===
 function euclidean(a, b) {
   return Math.sqrt(a.reduce((sum, val, i) => sum + (val - b[i]) ** 2, 0));
 }
@@ -233,7 +227,6 @@ function summarizeCluster(cluster, headers) {
 }
 
 
-// === RENDER CLUSTERS ===
 function render() {
   if (!rawData.length) return alert('Please upload a CSV file first!');
   const clusters = kMeans(rawData, k);
@@ -255,7 +248,6 @@ function render() {
   });
 }
 
-// === PARALLEL COORDINATES FOR CLUSTERING ===
 function drawParallelCoordinatesD3(svgSelector, dataset, selectedFeatures) {
   const svg = d3.select(svgSelector);
   svg.selectAll("*").remove();
