@@ -224,6 +224,15 @@ function euclidean(a, b) {
   return Math.sqrt(a.reduce((sum, val, i) => sum + (val - b[i]) ** 2, 0));
 }
 
+function summarizeCluster(cluster, headers) {
+  return headers.map((h, i) => {
+    const values = cluster.map(d => d[i]);
+    const avg = d3.mean(values).toFixed(1);
+    return `${h}: ${avg}`;
+  }).join(" | ");
+}
+
+
 // === RENDER CLUSTERS ===
 function render() {
   if (!rawData.length) return alert('Please upload a CSV file first!');

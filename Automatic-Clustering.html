@@ -60,7 +60,7 @@
             const result = csvToArray(evt.target.result);
             rawData = result.data;
             rawHeaders = result.headers;
-            // alert("CSV Loaded! Now choose clusters and hit 'Expand'");
+            alert("CSV Loaded! Now choose clusters and hit 'Expand'");
         };
       reader.readAsText(file);
     });
@@ -76,7 +76,6 @@
       const assignments = new Array(data.length);
       const means = [];
 
-      // Initialize random centroids
       for (let i = 0; i < k; i++) {
         means.push(data[Math.floor(Math.random() * data.length)]);
       }
@@ -85,7 +84,6 @@
       while (changed) {
         changed = false;
 
-        // Assign points
         for (let i = 0; i < data.length; i++) {
           const distances = means.map(m => euclidean(data[i], m));
           const minIndex = distances.indexOf(Math.min(...distances));
@@ -95,7 +93,6 @@
           }
         }
 
-        // Move means
         const sums = Array.from({ length: k }, () => Array(data[0].length).fill(0));
         const counts = Array(k).fill(0);
         for (let i = 0; i < data.length; i++) {
@@ -114,7 +111,6 @@
         }
       }
 
-      // Group by cluster
       const clustered = Array.from({ length: k }, () => []);
       for (let i = 0; i < data.length; i++) {
         clustered[assignments[i]].push(data[i]);
@@ -126,35 +122,104 @@
       return Math.sqrt(a.reduce((sum, val, i) => sum + (val - b[i]) ** 2, 0));
     }
 
+function summarizeCluster(cluster, headers) {
+  return headers.map((h, i) => {
+    const values = cluster.map(d => d[i]);
+    const avg = d3.mean(values).toFixed(1);
+    return `${h}: ${avg}`;
+  }).join(" | ");
+}
+
 function render() {
   if (!rawData.length) return alert('Please upload a CSV file first!');
   const clusters = kMeans(rawData, k);
 
   const container = document.getElementById('charts');
-  container.innerHTML = ''; // Clear previous plots
+  container.innerHTML = '';
+
+  const color = d3.scaleOrdinal(d3.schemeCategory10);
 
   clusters.forEach((cluster, index) => {
     if (!cluster.length) return;
+
+    const clusterWrapper = document.createElement('div');
+    clusterWrapper.style.display = 'inline-block';
+    clusterWrapper.style.margin = '20px 20px 20px 0';
+    clusterWrapper.style.verticalAlign = 'top';
+    clusterWrapper.style.textAlign = 'center';
+    clusterWrapper.style.width = 'fit-content';
+    container.appendChild(clusterWrapper);
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.innerHTML = `
+      <strong style="font-size: 14px;">Cluster ${index}</strong>
+      <span style="color: gray; font-size: 12px;">(n = ${cluster.length})</span><br>
+      <span style="font-size: 12px; color: #444;">${summarizeCluster(cluster, rawHeaders)}</span>
+    `;
+    summaryDiv.style.marginBottom = "8px";
+    summaryDiv.style.fontFamily = "Hanken Grotesk, sans-serif";
+    summaryDiv.style.paddingTop = "8px";
+    summaryDiv.style.borderTop = "1px solid #ddd";
+    summaryDiv.style.width = "100%";
+    summaryDiv.style.textAlign = "left";
+    clusterWrapper.appendChild(summaryDiv);
 
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute("width", 400);
     svg.setAttribute("height", 200);
     svg.classList.add("cluster-svg");
     svg.setAttribute("id", `parallel-coords-${index}`);
-    container.appendChild(svg);
+    svg.style.border = "1px solid #ddd";
+    svg.style.borderRadius = "6px";
+    svg.style.background = "white";
+    clusterWrapper.appendChild(svg);
 
-    drawParallelCoordinatesD3(`#parallel-coords-${index}`, cluster, rawHeaders);
+    drawParallelCoordinatesD3(`#parallel-coords-${index}`, cluster, rawHeaders, index, color);
   });
+
+
+const compareWrapper = document.createElement('div');
+compareWrapper.style.display = 'inline-block';
+compareWrapper.style.margin = '20px 0 0';
+compareWrapper.style.verticalAlign = 'top';
+compareWrapper.style.textAlign = 'center';
+compareWrapper.style.width = 'fit-content';
+container.appendChild(compareWrapper);
+
+const compareTitle = document.createElement('div');
+compareTitle.innerHTML = `
+  <strong style="font-size: 14px;">Compare All Clusters</strong>
+`;
+compareTitle.style.marginBottom = "8px";
+compareTitle.style.fontFamily = "Hanken Grotesk, sans-serif";
+compareTitle.style.borderTop = "1px solid #ddd";
+compareTitle.style.paddingTop = "8px";
+compareTitle.style.textAlign = "left";
+compareWrapper.appendChild(compareTitle);
+
+const combinedSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+combinedSvg.setAttribute("width", 400);
+combinedSvg.setAttribute("height", 200);
+combinedSvg.classList.add("cluster-svg");
+combinedSvg.setAttribute("id", `parallel-coords-combined`);
+combinedSvg.style.border = "1px solid #ddd";
+combinedSvg.style.background = "white";
+combinedSvg.style.borderRadius = "6px";
+compareWrapper.appendChild(combinedSvg);
+
+const flattened = clusters.flat();
+const clusterAssignments = clusters.flatMap((group, idx) => Array(group.length).fill(idx));
+drawParallelCoordinatesD3(`#parallel-coords-combined`, flattened, rawHeaders, clusterAssignments, color);
+
 }
 
-function drawParallelCoordinatesD3(svgSelector, dataset, selectedFeatures) {
+function drawParallelCoordinatesD3(svgSelector, dataset, selectedFeatures, clusterIndices, colorScale) {
   const svg = d3.select(svgSelector);
   svg.selectAll("*").remove();
 
   const width = +svg.attr("width");
   const height = +svg.attr("height");
 
-  // Add margins to prevent clipping
   const margin = { top: 30, right: 30, bottom: 20, left: 40 };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
@@ -162,40 +227,39 @@ function drawParallelCoordinatesD3(svgSelector, dataset, selectedFeatures) {
   const dimensions = selectedFeatures;
   if (dimensions.length < 2) return;
 
-  // Create a group inside the svg with margins applied
-  const g = svg.append("g")
-    .attr("transform", `translate(${margin.left},${margin.top})`);
+  const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-  // Y-axis scales per dimension
   const y = {};
-  for (let dim of dimensions) {
-    y[dim] = d3.scaleLinear()
-      .domain(d3.extent(dataset, d => +d[dimensions.indexOf(dim)]))
+  for (let i = 0; i < dimensions.length; i++) {
+    y[dimensions[i]] = d3.scaleLinear()
+      .domain(d3.extent(dataset, d => d[i]))
       .range([innerHeight, 0]);
   }
 
-  // X-axis: spacing between dimensions
-  const x = d3.scalePoint()
-    .range([0, innerWidth])
-    .domain(dimensions);
+  const x = d3.scalePoint().range([0, innerWidth]).domain(dimensions);
 
-  // Draw each data line
-  dataset.forEach(d => {
+  dataset.forEach((d, i) => {
+    const clusterIndex = Array.isArray(clusterIndices) ? clusterIndices[i] : clusterIndices;
     g.append("path")
       .datum(d)
-      .attr("d", d3.line()(dimensions.map((dim, i) => [x(dim), y[dim](d[i])])))
+      .attr("d", d3.line()(dimensions.map((dim, j) => [x(dim), y[dim](d[j])])))
       .style("fill", "none")
-      .style("stroke", "#177991")
+      .style("stroke", colorScale(clusterIndex))
       .style("stroke-width", 1.5)
-      .style("opacity", 0.5);
+      .style("opacity", 0.15)
+      .on("mouseover", function () {
+        d3.select(this).style("stroke-width", 2).style("opacity", 1);
+      })
+      .on("mouseout", function () {
+        d3.select(this).style("stroke-width", 1.5).style("opacity", 0.15);
+      });
   });
 
-  // Draw axes
   g.selectAll(".dimension")
     .data(dimensions)
     .enter().append("g")
     .attr("transform", d => `translate(${x(d)})`)
-    .each(function(d) {
+    .each(function (d) {
       d3.select(this).call(d3.axisLeft(y[d]));
     })
     .append("text")
