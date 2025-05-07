@@ -90,6 +90,58 @@ function setupDropTargets() {
   });
 }
 
+// function drawParallelCoordinates() {
+//   const svg = d3.select("#parallel-coords");
+//   svg.selectAll("*").remove();
+
+//   const width = +svg.attr("width");
+//   const height = +svg.attr("height");
+//   const dimensions = selectedFeatures.filter(f => f !== null);
+
+//   if (dimensions.length < 2) return;
+
+//   const y = {};
+//   for (let dim of dimensions) {
+//     y[dim] = d3.scaleLinear()
+//       .domain(d3.extent(dataset, d => +d[dim]))
+//       .range([height - 20, 20]);
+//   }
+
+//   const x = d3.scalePoint()
+//     .range([20, width - 20])
+//     .domain(dimensions);
+
+//     dataset.forEach(d => {
+//       svg.append("path")
+//         .datum(d)
+//         .attr("d", d3.line()(dimensions.map(dim => [x(dim), y[dim](+d[dim])])))
+//         .style("fill", "none")
+//         .style("stroke", "#177991")
+//         .style("stroke-width", 1)
+//         .style("opacity", 0.3)
+//         .on("mouseover", function() {
+//           d3.select(this).style("stroke-width", 2).style("opacity", 1);
+//         })
+//         .on("mouseout", function() {
+//           d3.select(this).style("stroke-width", 1).style("opacity", 0.3);
+//         });
+//     });
+
+    
+//   svg.selectAll(".dimension")
+//     .data(dimensions)
+//     .enter().append("g")
+//     .attr("transform", d => `translate(${x(d)})`)
+//     .each(function(d) {
+//       d3.select(this).call(d3.axisLeft(y[d]));
+//     })
+//     .append("text")
+//     .style("text-anchor", "middle")
+//     .attr("y", 10)
+//     .text(d => d)
+//     .style("font-size", "12px")
+//     .style("fill", "#6F6F79");
+// }
 function drawParallelCoordinates() {
   const svg = d3.select("#parallel-coords");
   svg.selectAll("*").remove();
@@ -97,52 +149,58 @@ function drawParallelCoordinates() {
   const width = +svg.attr("width");
   const height = +svg.attr("height");
   const dimensions = selectedFeatures.filter(f => f !== null);
-
   if (dimensions.length < 2) return;
+
+  // Add internal margin
+  const margin = { top: 30, right: 30, bottom: 20, left: 40 };
+  const innerWidth = width - margin.left - margin.right;
+  const innerHeight = height - margin.top - margin.bottom;
 
   const y = {};
   for (let dim of dimensions) {
     y[dim] = d3.scaleLinear()
       .domain(d3.extent(dataset, d => +d[dim]))
-      .range([height - 20, 20]);
+      .range([innerHeight, 0]);
   }
 
   const x = d3.scalePoint()
-    .range([20, width - 20])
+    .range([0, innerWidth])
     .domain(dimensions);
 
-    dataset.forEach(d => {
-      svg.append("path")
-        .datum(d)
-        .attr("d", d3.line()(dimensions.map(dim => [x(dim), y[dim](+d[dim])])))
-        .style("fill", "none")
-        .style("stroke", "#177991")
-        .style("stroke-width", 1)
-        .style("opacity", 0.3)
-        .on("mouseover", function() {
-          d3.select(this).style("stroke-width", 2).style("opacity", 1);
-        })
-        .on("mouseout", function() {
-          d3.select(this).style("stroke-width", 1).style("opacity", 0.3);
-        });
-    });
+  const g = svg.append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    
-    
-  svg.selectAll(".dimension")
+  dataset.forEach(d => {
+    g.append("path")
+      .datum(d)
+      .attr("d", d3.line()(dimensions.map(dim => [x(dim), y[dim](+d[dim])])))
+      .style("fill", "none")
+      .style("stroke", "#177991")
+      .style("stroke-width", 1)
+      .style("opacity", 0.2)
+      .on("mouseover", function () {
+        d3.select(this).style("stroke-width", 2).style("opacity", 1);
+      })
+      .on("mouseout", function () {
+        d3.select(this).style("stroke-width", 1).style("opacity", 0.2);
+      });
+  });
+
+  g.selectAll(".dimension")
     .data(dimensions)
     .enter().append("g")
     .attr("transform", d => `translate(${x(d)})`)
-    .each(function(d) {
+    .each(function (d) {
       d3.select(this).call(d3.axisLeft(y[d]));
     })
     .append("text")
     .style("text-anchor", "middle")
-    .attr("y", 10)
+    .attr("y", -10)
     .text(d => d)
     .style("font-size", "12px")
     .style("fill", "#6F6F79");
 }
+
 
 function selectFeature(feature) {
   if (selectedFeatures.includes(feature)) return;
