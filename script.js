@@ -1,3 +1,4 @@
+// === GLOBAL VARIABLES ===
 let rawHeaders = [];
 let rawData = [];
 let dataset = [];
@@ -21,6 +22,7 @@ function openSection(id) {
   arrow.classList.add('open');
 }
 
+// === FILE UPLOAD ===
 document.getElementById('csvFileInput').addEventListener('change', function(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -40,6 +42,8 @@ document.getElementById('csvFileInput').addEventListener('change', function(e) {
 
     alert("Dataset loaded! Now you can use both Feature Selection and Clustering.");
   };
+  // openSection('featureSelection');
+  // openSection('automaticClustering');
   reader.readAsText(file);
 
 });
@@ -142,6 +146,7 @@ function drawParallelCoordinates() {
     .style("fill", "#6F6F79");
 }
 
+// === MANUAL SELECT FEATURE FUNCTION (safe to keep) ===
 function selectFeature(feature) {
   if (selectedFeatures.includes(feature)) return;
   if (selectedFeatures.length >= maxFeatures) return;
@@ -152,6 +157,7 @@ function selectFeature(feature) {
   if (selectedFeatures.length >= 2) drawParallelCoordinates();
 }
 
+// === CLUSTERING SETUP ===
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.cluster-options span').forEach(span => {
     span.onclick = () => {
@@ -162,10 +168,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// === K-MEANS FOR CLUSTERING ===
 function kMeans(data, k) {
   const assignments = new Array(data.length);
   const means = [];
 
+  // Initialize random centroids
   for (let i = 0; i < k; i++) {
     means.push(data[Math.floor(Math.random() * data.length)]);
   }
@@ -174,6 +182,7 @@ function kMeans(data, k) {
   while (changed) {
     changed = false;
 
+    // Assign points
     for (let i = 0; i < data.length; i++) {
       const distances = means.map(m => euclidean(data[i], m));
       const minIndex = distances.indexOf(Math.min(...distances));
@@ -183,6 +192,7 @@ function kMeans(data, k) {
       }
     }
 
+    // Move means
     const sums = Array.from({ length: k }, () => Array(data[0].length).fill(0));
     const counts = Array(k).fill(0);
     for (let i = 0; i < data.length; i++) {
@@ -201,6 +211,7 @@ function kMeans(data, k) {
     }
   }
 
+  // Group by cluster
   const clustered = Array.from({ length: k }, () => []);
   for (let i = 0; i < data.length; i++) {
     clustered[assignments[i]].push(data[i]);
@@ -208,10 +219,12 @@ function kMeans(data, k) {
   return clustered;
 }
 
+// === EUCLIDEAN DISTANCE ===
 function euclidean(a, b) {
   return Math.sqrt(a.reduce((sum, val, i) => sum + (val - b[i]) ** 2, 0));
 }
 
+// === RENDER CLUSTERS ===
 function render() {
   if (!rawData.length) return alert('Please upload a CSV file first!');
   const clusters = kMeans(rawData, k);
@@ -233,6 +246,7 @@ function render() {
   });
 }
 
+// === PARALLEL COORDINATES FOR CLUSTERING ===
 function drawParallelCoordinatesD3(svgSelector, dataset, selectedFeatures) {
   const svg = d3.select(svgSelector);
   svg.selectAll("*").remove();
@@ -284,4 +298,27 @@ function drawParallelCoordinatesD3(svgSelector, dataset, selectedFeatures) {
     .text(d => d)
     .style("font-size", "12px")
     .style("fill", "#6F6F79");
+}
+
+function downloadSelectedFeatures() {
+  const selected = selectedFeatures.filter(f => f !== null);
+  if (selected.length < 2) {
+    alert("Please select at least two features.");
+    return;
+  }
+
+  const filteredData = dataset.map(row => {
+    const newRow = {};
+    selected.forEach(f => newRow[f] = row[f]);
+    return newRow;
+  });
+
+  const csvContent = d3.csvFormat(filteredData);
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.setAttribute("href", url);
+  a.setAttribute("download", "selected_features.csv");
+  a.click();
 }
