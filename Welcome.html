@@ -26,6 +26,23 @@
         <img src="icons/edit.svg" alt="Download CSV" width="50" draggable="true" style="cursor: grab;">
         Student Performance Dataset
       </a>
-    </div>  
+
+      <img id="drag-csv" src="icons/edit.svg" alt="Drag CSV" width="50" draggable="true" style="cursor: grab;">
+    </div>
+    
+    <script>
+      const dragImg = document.getElementById("drag-csv");
+    
+      dragImg.addEventListener("dragstart", async (event) => {
+        const response = await fetch("https://raw.githubusercontent.com/ejeong4/codap-parallel-coordinates/main/datasets/mammals.csv");
+        const blob = await response.blob();
+        const file = new File([blob], "mammals.csv", { type: "text/csv" });
+    
+        const dt = event.dataTransfer;
+        dt.clearData(); // Stop it from passing image URL
+        dt.effectAllowed = "copy";
+        dt.items.add(file);
+      });
+    </script>
 </body>
 </html>
