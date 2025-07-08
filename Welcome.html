@@ -7,7 +7,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
-  <script src="https://d3js.org/d3.v6.min.js"></script>
 </head>
 <body>
     <h2>Welcome to ML4Inq CODAP Integration</h2>
@@ -16,13 +15,11 @@
       Figure out how to accomplish each of these basic tasks:</div>
     <div>
 
-    <!-- <span class="App-link">
-      <img id="drag-csv" src="icons/edit.svg" alt="link" width="50" draggable="true">
-    </span> -->
-    <a href="https://codap.concord.org/releases/latest/static/dg/en/cert/index.html?url=https://raw.githubusercontent.com/ejeong4/codap-parallel-coordinates/main/datasets/mammals.csv" target="_blank">
-      <img src="icons/edit.svg" alt="Open in CODAP" width="50">
-    </a>
-
+      <a href="./datasets/mammals.csv" download="mammals.csv" class="dataset-comp">
+        <img src="icons/edit.svg" alt="Download CSV" width="50" draggable="true" style="cursor: grab;">
+        <h3>Mammal Dataset</h3>
+      </a>
+     
       <label> 
         <h3>Import Data</h3>
         <p>Choose a dataset with multiple numerical variables for Feature Selection</p>
@@ -31,20 +28,6 @@
     </div>
     
     <button onclick="downloadSelectedFeatures()">Download Selected Data</button>
-    
-    <script>
-      const dragImg = document.getElementById("drag-csv");
-    
-      dragImg.addEventListener("dragstart", (event) => {
-        // Point to a real, public CSV file (hosted somewhere like GitHub, Glitch, etc.)
-        const csvURL = "https://raw.githubusercontent.com/ejeong4/codap-parallel-coordinates/main/datasets/mammals.csv";
-        const filename = "mammals.csv";
-    
-        // Simulate a file download by setting a download URL
-        event.dataTransfer.setData("DownloadURL", `text/csv:${filename}:${csvURL}`);
-      });
-    </script>
-    
   
 </body>
 </html>

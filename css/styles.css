@@ -292,3 +292,7 @@ input[type="file"] input#file-upload-button {
   .arrow.open {
     transform: rotate(90deg);
   }
+
+  .App-link {
+    cursor: move;
+}
