@@ -16,9 +16,12 @@
       Figure out how to accomplish each of these basic tasks:</div>
     <div>
 
-    <span class="App-link">
+    <!-- <span class="App-link">
       <img id="drag-csv" src="icons/edit.svg" alt="link" width="50" draggable="true">
-    </span>
+    </span> -->
+    <a href="https://codap.concord.org/releases/latest/static/dg/en/cert/index.html?url=https://raw.githubusercontent.com/ejeong4/codap-parallel-coordinates/main/datasets/mammals.csv" target="_blank">
+      <img src="icons/edit.svg" alt="Open in CODAP" width="50">
+    </a>
 
       <label> 
         <h3>Import Data</h3>
@@ -31,14 +34,17 @@
     
     <script>
       const dragImg = document.getElementById("drag-csv");
-
+    
       dragImg.addEventListener("dragstart", (event) => {
-        const csvURL = window.location.origin + "./datasets/mammals.csv";
+        // Point to a real, public CSV file (hosted somewhere like GitHub, Glitch, etc.)
+        const csvURL = "https://raw.githubusercontent.com/ejeong4/codap-parallel-coordinates/main/datasets/mammals.csv";
         const filename = "mammals.csv";
-
+    
+        // Simulate a file download by setting a download URL
         event.dataTransfer.setData("DownloadURL", `text/csv:${filename}:${csvURL}`);
       });
     </script>
+    
   
 </body>
 </html>
