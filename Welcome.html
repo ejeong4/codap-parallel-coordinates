@@ -15,19 +15,16 @@
       Figure out how to accomplish each of these basic tasks:</div>
     <div>
 
-      <a href="./datasets/mammals.csv" download="mammals.csv" class="dataset-comp">
+      <a class="dataset-comp" href="./datasets/mammals.csv" download="mammals.csv">
+        <img src="icons/edit.svg" alt="Download CSV" width="50" draggable="true" style="cursor: grab;"
+        >
+        Mammal Dataset
+      </a>
+
+      <a class="dataset-comp" href="./datasets/student_lifestyle_performance.csv" download="student_lifestyle_performance.csv">
         <img src="icons/edit.svg" alt="Download CSV" width="50" draggable="true" style="cursor: grab;">
-        <h3>Mammal Dataset</h3>
+        Student Performance Dataset
       </a>
      
-      <label> 
-        <h3>Import Data</h3>
-        <p>Choose a dataset with multiple numerical variables for Feature Selection</p>
-        <input type="file" id="csvFileInput" accept=".csv">
-      </label>
-    </div>
-    
-    <button onclick="downloadSelectedFeatures()">Download Selected Data</button>
-  
 </body>
 </html>

@@ -296,3 +296,18 @@ input[type="file"] input#file-upload-button {
   .App-link {
     cursor: move;
 }
+
+.dataset-comp {
+  cursor: grab;
+  flex-direction: row;
+  display: flex;
+  align-items: center;
+  color: #54636F;
+  text-decoration: none;
+  background-color: white;
+  padding: 8px;
+  border-radius: 12px;
+  border: 1px solid #E9EAED;
+  box-shadow: 2px 2px 5px -4px #00000020;
+  width: fit-content;
+}
