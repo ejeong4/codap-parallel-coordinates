@@ -2,52 +2,42 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Interactive Parallel Coordinates + K-Means</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
+  <title>Drag CSV into CODAP</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2em;
+    }
+    .drag-container {
+      display: flex;
+      align-items: center;
+      gap: 1em;
+    }
+    .drag-container img {
+      cursor: grab;
+    }
+  </style>
 </head>
 <body>
-    <h2>Welcome to ML4Inq CODAP Integration</h2>
-    <div class="explain welcome-div">
-      <div class="align-center">
-        <!-- <img src="icons/zoom-in.svg" alt=""> -->
-        Drag a dataset below into the<em>Parallel Coordinate Component</em>:
-      </div>
+  <h2>Drag this into CODAP</h2>
+  <p>Open <a href="https://codap.concord.org/releases/latest/static/dg/en/cert/index.html" target="_blank">CODAP</a> in a new tab, then drag the icon below into the CODAP window.</p>
 
-      <div id="drag-link" draggable="true" style="width:50px; height:50px; background:url('icons/edit.svg') center/contain no-repeat;"></div>
+  <div class="drag-container">
+    <a id="drag-link" href="https://raw.githubusercontent.com/ejeong4/codap-parallel-coordinates/main/datasets/mammals.csv">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/CSV_Logo.svg/64px-CSV_Logo.svg.png" width="50" alt="CSV icon" draggable="true">
+    </a>
+    <span>Mammal Dataset</span>
+  </div>
 
-      <!-- <a class="dataset-comp" href="https://raw.githubusercontent.com/ejeong4/codap-parallel-coordinates/main/datasets/mammals.csv" download="mammals.csv">
-        <img src="icons/edit.svg" alt="Download CSV" width="50" draggable="true" style="cursor: grab;"
-        >
-        Mammal Dataset
-      </a>
+  <script>
+    const dragLink = document.getElementById("drag-link");
 
-      <a class="dataset-comp" href="./datasets/student_lifestyle_performance.csv" download="student_lifestyle_performance.csv">
-        <img src="icons/edit.svg" alt="Download CSV" width="50" draggable="true" style="cursor: grab;">
-        Student Performance Dataset
-      </a>
-
-      <a href="https://codap.concord.org/releases/latest/static/dg/en/cert/index.html?url=https://raw.githubusercontent.com/ejeong4/codap-parallel-coordinates/main/datasets/mammals.csv" target="_blank">
-        Open in CODAP
-      </a>
-      
-
-      <img id="drag-csv" src="icons/edit.svg" alt="Drag CSV" width="50" draggable="true" style="cursor: grab;"> -->
-    </div>
-    
-    <script>
-      const dragLink = document.getElementById("drag-link");
-    
-      dragLink.addEventListener("dragstart", (event) => {
-        const url = "https://raw.githubusercontent.com/ejeong4/codap-parallel-coordinates/main/datasets/mammals.csv";
-        
-        event.dataTransfer.setData("text/uri-list", url);
-        event.dataTransfer.setData("text/plain", url); // optional
-        event.dataTransfer.effectAllowed = "copyLink";
-      });
-    </script>    
-    
+    dragLink.addEventListener("dragstart", function (e) {
+      const url = dragLink.href;
+      e.dataTransfer.setData("text/uri-list", url);
+      e.dataTransfer.setData("text/plain", url);
+      e.dataTransfer.effectAllowed = "copyLink";
+    });
+  </script>
 </body>
 </html>
