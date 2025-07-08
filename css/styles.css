@@ -311,3 +311,17 @@ input[type="file"] input#file-upload-button {
   box-shadow: 2px 2px 5px -4px #00000020;
   width: fit-content;
 }
+
+.welcome-div{
+  display: flex;
+  flex-direction: column;
+  justify-self: start;
+  align-items: flex-start;
+}
+
+.align-center {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  justify-content: center;
+}
