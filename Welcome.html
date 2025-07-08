@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Interactive Parallel Coordinates + K-Means</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+    <h2>Welcome to ML4Inq CODAP Integration</h2>
+    <div class="explain">
+      <img src="icons/zoom-in.svg" alt="">
+      Figure out how to accomplish each of these basic tasks:</div>
+    <div>
+
+    <span class="App-link">
+      <img id="drag-csv" src="icons/edit.svg" alt="link" width="50" draggable="true">
+    </span>
+
+      <label> 
+        <h3>Import Data</h3>
+        <p>Choose a dataset with multiple numerical variables for Feature Selection</p>
+        <input type="file" id="csvFileInput" accept=".csv">
+      </label>
+    </div>
+    
+    <button onclick="downloadSelectedFeatures()">Download Selected Data</button>
+    
+    <script>
+      const dragImg = document.getElementById("drag-csv");
+
+      dragImg.addEventListener("dragstart", (event) => {
+        const csvURL = window.location.origin + "./datasets/mammals.csv";
+        const filename = "mammals.csv";
+
+        event.dataTransfer.setData("DownloadURL", `text/csv:${filename}:${csvURL}`);
+      });
+    </script>
+  
+</body>
+</html>
