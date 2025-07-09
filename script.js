@@ -459,7 +459,6 @@ window.addEventListener('drop', e => {
 
   const url = e.dataTransfer.getData('text/plain').trim();
   if (!url.endsWith('.csv')) {
-    alert("Please drag a valid .csv file link.");
     return;
   }
 
