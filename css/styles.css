@@ -315,6 +315,7 @@ input[type="file"] input#file-upload-button {
 #clearCsvBtn {
   margin: 0;
   padding: 12px;
+  border-radius: 16px;
 }
 
 
