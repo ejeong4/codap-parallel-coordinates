@@ -10,34 +10,38 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <h2>Automatic Clustering</h2>
+  <!-- <h2>Automatic Clustering</h2> -->
   <div class="explain">
     <img src="icons/zoom-in.svg" alt="">
     Automatic Clustering is a way to organize information into groups, or "clusters," based on how similar the items are. </div>
   <div class="content">
   <label><h3>Import Data</h3>
-    <p>Choose a dataset with multiple numerical variables for clustering</p>
+    <!-- <p>Choose a dataset with multiple numerical variables for clustering</p> -->
     <!-- <input type="file" id="csvInput" accept=".csv" /></label> -->
-    <input type="url" id="csvUrlInput" placeholder="Enter CSV file URL here" style="width: 100%; max-width: 400px;">
-    <button id="loadCsvBtn" style="margin-top: 6px;">Load CSV from URL</button>    
+    <div class="row">
+      <input type="url" id="csvUrlInput" placeholder="Insert CSV Link Here">
+      <button id="loadCsvBtn">Load CSV</button>
+    </div>  
   <div>
     <h3>Split the dataset into:</h3>
-    <div class="cluster-options">
-      <span data-k="2">2 clusters</span>
-      <span data-k="3">3 clusters</span>
-      <span data-k="4">4 clusters</span>
-      <span data-k="5">5 clusters</span>
+    <div class="row">
+      <div class="cluster-options">
+        <span data-k="2">2 clusters</span>
+        <span data-k="3">3 clusters</span>
+        <span data-k="4">4 clusters</span>
+        <span data-k="5">5 clusters</span>
+      </div>
+      <button id="expandBtn" onclick="render()">Expand</button>
     </div>
   </div>
-  <label>
-    <!-- <h3>Choose graph type:</h3>
+  <!-- <label>
+    <h3>Choose graph type:</h3>
     <select id="glyphSelect">
       <option value="parallel">
         Parallel Coordinate
     </option>
-    </select> -->
-    <button onclick="render()">Expand</button>
-  </label>
+    </select>
+  </label> -->
   <div id="charts"></div>
 
   <script>
