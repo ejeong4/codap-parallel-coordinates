@@ -312,6 +312,11 @@ input[type="file"] input#file-upload-button {
   width: fit-content;
 }
 
+#clearCsvBtn {
+  margin: 0;
+  padding: 12px;
+}
+
 
 .welcome-div {
   display: flex;
