@@ -53,7 +53,6 @@ function openSection(id) {
 document.getElementById('loadCsvBtn').addEventListener('click', () => {
   const url = document.getElementById('csvUrlInput').value.trim();
   if (!url) {
-    alert('Please enter a valid CSV URL.');
     return;
   }
 
@@ -67,11 +66,9 @@ document.getElementById('loadCsvBtn').addEventListener('click', () => {
         renderFeatureButtons(rawHeaders);
       }
 
-      alert('Dataset loaded! Now you can use both Feature Selection and Clustering.');
     })
     .catch(err => {
       console.error(err);
-      alert('Error loading CSV. Make sure the URL is valid and supports CORS.');
     });
 });
 
@@ -316,7 +313,7 @@ function summarizeCluster(cluster, headers) {
 
 
 function render() {
-  if (!rawData.length) return alert('Please upload a CSV file first!');
+  if (!rawData.length) return ;
   const clusters = kMeans(rawData, k);
 
   const container = document.getElementById('charts');

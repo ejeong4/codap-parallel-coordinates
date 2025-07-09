@@ -81,11 +81,6 @@
     // });
 
     document.getElementById('loadCsvBtn').addEventListener('click', () => {
-      const url = document.getElementById('csvUrlInput').value.trim();
-      if (!url) {
-        alert('Please enter a valid CSV URL.');
-        return;
-      }
 
       d3.csv(url)
         .then(data => {
@@ -97,11 +92,9 @@
             renderFeatureButtons(rawHeaders);
           }
 
-          alert('Dataset loaded! Now you can use both Feature Selection and Clustering.');
         })
         .catch(err => {
           console.error(err);
-          alert('Error loading CSV. Make sure the URL is valid and supports CORS.');
         });
     });
 
