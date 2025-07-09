@@ -17,7 +17,9 @@
   <div class="content">
   <label><h3>Import Data</h3>
     <p>Choose a dataset with multiple numerical variables for clustering</p>
-    <input type="file" id="csvInput" accept=".csv" /></label>
+    <!-- <input type="file" id="csvInput" accept=".csv" /></label> -->
+    <input type="url" id="csvUrlInput" placeholder="Enter CSV file URL here" style="width: 100%; max-width: 400px;">
+    <button id="loadCsvBtn" style="margin-top: 6px;">Load CSV from URL</button>    
   <div>
     <h3>Split the dataset into:</h3>
     <div class="cluster-options">
@@ -41,6 +43,7 @@
   <script>
     let rawHeaders = [];
     let rawData = [];
+    let dataset = [];
     let k = 2;
 
     document.querySelectorAll('.cluster-options span').forEach(span => {
@@ -51,18 +54,43 @@
       }
     });
 
-    document.getElementById('csvInput').addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (!file) return;
+    // document.getElementById('csvInput').addEventListener('change', function(e) {
+    //   const file = e.target.files[0];
+    //   if (!file) return;
 
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-            const result = csvToArray(evt.target.result);
-            rawData = result.data;
-            rawHeaders = result.headers;
-            alert("CSV Loaded! Now choose clusters and hit 'Expand'");
-        };
-      reader.readAsText(file);
+    //   const reader = new FileReader();
+    //   reader.onload = function(evt) {
+    //         const result = csvToArray(evt.target.result);
+    //         rawData = result.data;
+    //         rawHeaders = result.headers;
+    //         alert("CSV Loaded! Now choose clusters and hit 'Expand'");
+    //     };
+    //   reader.readAsText(file);
+    // });
+
+    document.getElementById('loadCsvBtn').addEventListener('click', () => {
+      const url = document.getElementById('csvUrlInput').value.trim();
+      if (!url) {
+        alert('Please enter a valid CSV URL.');
+        return;
+      }
+
+      d3.csv(url)
+        .then(data => {
+          dataset = data;
+          rawHeaders = dataset.columns || Object.keys(data[0]);
+          rawData = data.map(row => rawHeaders.map(h => +row[h]));
+
+          if (document.getElementById('feature-buttons')) {
+            renderFeatureButtons(rawHeaders);
+          }
+
+          alert('Dataset loaded! Now you can use both Feature Selection and Clustering.');
+        })
+        .catch(err => {
+          console.error(err);
+          alert('Error loading CSV. Make sure the URL is valid and supports CORS.');
+        });
     });
 
     function csvToArray(str) {
