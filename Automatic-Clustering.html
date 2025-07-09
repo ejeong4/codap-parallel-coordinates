@@ -81,7 +81,7 @@
     // });
 
     document.getElementById('loadCsvBtn').addEventListener('click', () => {
-
+      const url = document.getElementById('csvUrlInput').value.trim();
       d3.csv(url)
         .then(data => {
           dataset = data;
