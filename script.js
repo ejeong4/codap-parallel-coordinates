@@ -423,7 +423,7 @@ function drawParallelCoordinatesD3(svgSelector, dataset, selectedFeatures) {
 function createLinkForSelectedFeatures() {
   const selected = selectedFeatures.filter(f => f !== null);
   if (selected.length < 2) {
-    alert("Please select at least two features.");
+    // alert("Please select at least two features.");
     return;
   }
 
