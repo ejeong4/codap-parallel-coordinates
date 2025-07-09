@@ -5,6 +5,11 @@ let selectedFeatures = Array(5).fill(null);
 let k = 2;
 const maxFeatures = 5;
 
+document.getElementById('clearCsvBtn').addEventListener('click', () => {
+  document.getElementById('csvUrlInput').value = '';
+});
+
+
 function toggleSection(id) {
   const section = document.getElementById(id);
   const arrow = document.getElementById('arrow-' + id);
