@@ -504,10 +504,10 @@ document.getElementById("drag-wrapper").addEventListener("dragstart", (e) => {
   });
 
   const csvContent = d3.csvFormat(filteredData);
-  const blob = new Blob([csvContent], { type: "text/csv" });
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
 
+  e.dataTransfer.setData("text/plain", url);
   e.dataTransfer.setData("text/uri-list", url);
-  e.dataTransfer.setData("DownloadURL", `text/csv:selected_features.csv:${url}`);
 });
 
