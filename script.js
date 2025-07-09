@@ -488,3 +488,26 @@ window.addEventListener('drop', e => {
       alert("Failed to load CSV. Check the URL and CORS settings.");
     });
 });
+
+document.getElementById("drag-wrapper").addEventListener("dragstart", (e) => {
+  const selected = selectedFeatures.filter(f => f !== null);
+  if (selected.length < 2) {
+    alert("Select at least two features.");
+    e.preventDefault();
+    return;
+  }
+
+  const filteredData = dataset.map(row => {
+    const newRow = {};
+    selected.forEach(f => newRow[f] = row[f]);
+    return newRow;
+  });
+
+  const csvContent = d3.csvFormat(filteredData);
+  const blob = new Blob([csvContent], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+
+  e.dataTransfer.setData("text/uri-list", url);
+  e.dataTransfer.setData("DownloadURL", `text/csv:selected_features.csv:${url}`);
+});
+
