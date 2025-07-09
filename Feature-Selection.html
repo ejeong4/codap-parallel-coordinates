@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Interactive Parallel Coordinates + K-Means</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
-  <script src="https://d3js.org/d3.v6.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Interactive Parallel Coordinates + K-Means</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
 </head>
+
 <body>
     <!-- <h2>Feature Selection</h2> -->
     <!-- <div class="explain">
       <img src="icons/zoom-in.svg" alt="">
       "Feature Selection" is a way to identify the most important variables, or "features," in a dataset that contribute to a specific outcome. </div>
     <div> -->
-      <label> 
+    <label> 
         <h3>Feature Selection</h3>
         <!-- <p>Choose a dataset with multiple numerical variables for Feature Selection</p> -->
         <!-- <input type="file" id="csvFileInput" accept=".csv"> -->
@@ -27,40 +29,41 @@
         
       </label>
     <!-- </div> -->
-    
-    <a id="drag-wrapper" draggable="true">
-      <svg id="parallel-coords" width="400" height="300"></svg>
+
+    <a id="drag-wrapper" draggable="true" class="drag">
+        <svg id="parallel-coords" width="400" height="300"></svg>
     </a>
     <!-- <button onclick="downloadSelectedFeatures()">Download Selected Data</button> -->
-    
-    
+
+
     <div style="display: flex; gap: 40px; margin-top: 6px; justify-content: space-between;">
-      <div style="flex: 1;">
-        <p>Selected Features</p>
-        <div id="selected-features" class="drop-column">
-          <div class="drop-slot" data-index="0">Feature 1: <span class="drop-label">Drop here</span></div>
-          <div class="drop-slot" data-index="1">Feature 2: <span class="drop-label">Drop here</span></div>
-          <div class="drop-slot" data-index="2">Feature 3: <span class="drop-label">Drop here</span></div>
-          <div class="drop-slot" data-index="3">Feature 4: <span class="drop-label">Drop here</span></div>
-          <div class="drop-slot" data-index="4">Feature 5: <span class="drop-label">Drop here</span></div>
+        <div style="flex: 1;">
+            <p>Selected Features</p>
+            <div id="selected-features" class="drop-column">
+                <div class="drop-slot" data-index="0">Feature 1: <span class="drop-label">Drop here</span></div>
+                <div class="drop-slot" data-index="1">Feature 2: <span class="drop-label">Drop here</span></div>
+                <div class="drop-slot" data-index="2">Feature 3: <span class="drop-label">Drop here</span></div>
+                <div class="drop-slot" data-index="3">Feature 4: <span class="drop-label">Drop here</span></div>
+                <div class="drop-slot" data-index="4">Feature 5: <span class="drop-label">Drop here</span></div>
+            </div>
         </div>
-      </div>
-    
-      <div style="flex: 1;">
-        <p>Available Features</p>
-        <div class="feature-list" id="feature-buttons"></div>
-      </div>
+
+        <div style="flex: 1;">
+            <p>Available Features</p>
+            <div class="feature-list" id="feature-buttons"></div>
+        </div>
     </div>
 
     <div class="row" id="createlinkrow">
-      <button id="createLinkButton">
+        <button id="createLinkButton">
         Select Data
       </button>
-      <p id="generatedLinkContainer" style="margin-top: 10px;"></p>
-      
+        <p id="generatedLinkContainer" style="margin-top: 10px;"></p>
+
     </div>
-    
-  <script src="script.js"></script>
-  
+
+    <script src="script.js"></script>
+
 </body>
+
 </html>
