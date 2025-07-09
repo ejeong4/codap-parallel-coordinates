@@ -384,7 +384,30 @@ function drawParallelCoordinatesD3(svgSelector, dataset, selectedFeatures) {
     .style("fill", "#6F6F79");
 }
 
-function downloadSelectedFeatures() {
+// function downloadSelectedFeatures() {
+//   const selected = selectedFeatures.filter(f => f !== null);
+//   if (selected.length < 2) {
+//     alert("Please select at least two features.");
+//     return;
+//   }
+
+//   const filteredData = dataset.map(row => {
+//     const newRow = {};
+//     selected.forEach(f => newRow[f] = row[f]);
+//     return newRow;
+//   });
+
+//   const csvContent = d3.csvFormat(filteredData);
+//   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+//   const url = URL.createObjectURL(blob);
+
+//   const a = document.createElement("a");
+//   a.setAttribute("href", url);
+//   a.setAttribute("download", "selected_features.csv");
+//   a.click();
+// }
+
+function createLinkForSelectedFeatures() {
   const selected = selectedFeatures.filter(f => f !== null);
   if (selected.length < 2) {
     alert("Please select at least two features.");
@@ -401,8 +424,8 @@ function downloadSelectedFeatures() {
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
 
-  const a = document.createElement("a");
-  a.setAttribute("href", url);
-  a.setAttribute("download", "selected_features.csv");
-  a.click();
+  const container = document.getElementById("generatedLinkContainer");
+  container.innerHTML = `<a href="${url}" download="selected_features.csv" target="_blank">CSV Link</a>`;
 }
+
+document.getElementById("createLinkButton").addEventListener("click", createLinkForSelectedFeatures);
