@@ -361,3 +361,8 @@ input[type="file"] input#file-upload-button {
 #expandBtn {
   height: fit-content;
 }
+
+body.dragging {
+  background-color: #f3f9ff;
+  transition: background-color 0.2s;
+}
