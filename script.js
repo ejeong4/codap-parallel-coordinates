@@ -9,6 +9,29 @@ document.getElementById('clearCsvBtn').addEventListener('click', () => {
   document.getElementById('csvUrlInput').value = '';
 });
 
+function resetState() {
+  rawHeaders = [];
+  rawData = [];
+  dataset = [];
+  selectedFeatures = Array(5).fill(null);
+
+  // Clear feature buttons
+  const featureButtons = document.getElementById('feature-buttons');
+  if (featureButtons) featureButtons.innerHTML = '';
+
+  // Reset drop slots
+  document.querySelectorAll('.drop-slot .drop-label').forEach(label => {
+    label.textContent = 'Drop here';
+  });
+
+  // Clear chart
+  d3.select("#parallel-coords").selectAll("*").remove();
+
+  // Clear generated CSV link
+  const linkContainer = document.getElementById("generatedLinkContainer");
+  if (linkContainer) linkContainer.innerHTML = '';
+}
+
 
 function toggleSection(id) {
   const section = document.getElementById(id);
@@ -75,29 +98,35 @@ document.getElementById('loadCsvBtn').addEventListener('click', () => {
   const url = document.getElementById('csvUrlInput').value.trim();
   if (!url) return;
 
+  resetState(); // clear everything before loading new CSV
+
   d3.csv(url)
     .then(data => {
       dataset = data;
 
       const allHeaders = data.columns || Object.keys(data[0]);
-      // Keep only numeric headers
-      rawHeaders = allHeaders.filter(header => {
-        return data.some(row => {
+
+      // Filter only numeric columns
+      rawHeaders = allHeaders.filter(header =>
+        data.some(row => {
           const val = row[header];
           return val !== "" && !isNaN(+val);
-        });
-      });
+        })
+      );
 
       rawData = data.map(row => rawHeaders.map(h => +row[h]));
 
       if (document.getElementById('feature-buttons')) {
         renderFeatureButtons(rawHeaders);
       }
+
     })
     .catch(err => {
       console.error(err);
+      alert("Failed to load CSV. Check the URL and CORS settings.");
     });
 });
+
 
 
 function renderFeatureButtons(features) {
