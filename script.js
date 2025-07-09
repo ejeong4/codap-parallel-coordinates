@@ -50,22 +50,49 @@ function openSection(id) {
 //   reader.readAsText(file);
 
 // });
+// document.getElementById('loadCsvBtn').addEventListener('click', () => {
+//   const url = document.getElementById('csvUrlInput').value.trim();
+//   if (!url) {
+//     return;
+//   }
+
+//   d3.csv(url)
+//     .then(data => {
+//       dataset = data;
+//       rawHeaders = dataset.columns || Object.keys(data[0]);
+//       rawData = data.map(row => rawHeaders.map(h => +row[h]));
+
+//       if (document.getElementById('feature-buttons')) {
+//         renderFeatureButtons(rawHeaders);
+//       }
+
+//     })
+//     .catch(err => {
+//       console.error(err);
+//     });
+// });
 document.getElementById('loadCsvBtn').addEventListener('click', () => {
   const url = document.getElementById('csvUrlInput').value.trim();
-  if (!url) {
-    return;
-  }
+  if (!url) return;
 
   d3.csv(url)
     .then(data => {
       dataset = data;
-      rawHeaders = dataset.columns || Object.keys(data[0]);
+
+      const allHeaders = data.columns || Object.keys(data[0]);
+      // Keep only numeric headers
+      rawHeaders = allHeaders.filter(header => {
+        return data.some(row => {
+          const val = row[header];
+          return val !== "" && !isNaN(+val);
+        });
+      });
+
       rawData = data.map(row => rawHeaders.map(h => +row[h]));
 
       if (document.getElementById('feature-buttons')) {
         renderFeatureButtons(rawHeaders);
       }
-
     })
     .catch(err => {
       console.error(err);
