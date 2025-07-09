@@ -220,7 +220,6 @@ input[type="file"] input#file-upload-button {
 
 #parallel-coords {
     width: 400px;
-    margin-top: 20px;
     overflow: visible;
     position: relative;
     border: 1.5px solid #D9D9D9;
