@@ -225,7 +225,7 @@ input[type="file"] input#file-upload-button {
     border: 1.5px solid #D9D9D9;
     border-radius: 16px;
     color: #6F6F79;
-    cursor: pointer;
+    cursor: move;
     padding: 15px 30px 10px 30px;
 }
 
@@ -364,4 +364,8 @@ input[type="file"] input#file-upload-button {
 body.dragging {
   background-color: #f3f9ff;
   transition: background-color 0.2s;
+}
+
+.drag {
+  cursor:move;
 }

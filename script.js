@@ -90,7 +90,7 @@ function renderFeatureButtons(features) {
 
   features.forEach(f => {
     const tag = document.createElement('div');
-    tag.className = 'feature-tag';
+    tag.className = 'feature-tag drag';
     tag.textContent = f;
     tag.draggable = true;
     tag.addEventListener('dragstart', (e) => {
