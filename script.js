@@ -49,51 +49,6 @@ function openSection(id) {
   arrow.classList.add('open');
 }
 
-// document.getElementById('csvFileInput').addEventListener('change', function(e) {
-//   const file = e.target.files[0];
-//   if (!file) return;
-
-//   const reader = new FileReader();
-//   reader.onload = function(event) {
-//     const text = event.target.result;
-
-//     dataset = d3.csvParse(text);                     
-//     rawHeaders = dataset.columns;                    
-//     rawData = dataset.map(row => rawHeaders.map(h => +row[h]));
-
-//     if (document.getElementById('feature-buttons')) {
-//       renderFeatureButtons(rawHeaders);
-//     }
-    
-
-//     alert("Dataset loaded! Now you can use both Feature Selection and Clustering.");
-//   };
-//   // openSection('featureSelection');
-//   // openSection('automaticClustering');
-//   reader.readAsText(file);
-
-// });
-// document.getElementById('loadCsvBtn').addEventListener('click', () => {
-//   const url = document.getElementById('csvUrlInput').value.trim();
-//   if (!url) {
-//     return;
-//   }
-
-//   d3.csv(url)
-//     .then(data => {
-//       dataset = data;
-//       rawHeaders = dataset.columns || Object.keys(data[0]);
-//       rawData = data.map(row => rawHeaders.map(h => +row[h]));
-
-//       if (document.getElementById('feature-buttons')) {
-//         renderFeatureButtons(rawHeaders);
-//       }
-
-//     })
-//     .catch(err => {
-//       console.error(err);
-//     });
-// });
 document.getElementById('loadCsvBtn').addEventListener('click', () => {
   const url = document.getElementById('csvUrlInput').value.trim();
   if (!url) return;

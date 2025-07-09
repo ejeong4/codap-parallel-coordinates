@@ -66,20 +66,6 @@
       }
     });
 
-    // document.getElementById('csvInput').addEventListener('change', function(e) {
-    //   const file = e.target.files[0];
-    //   if (!file) return;
-
-    //   const reader = new FileReader();
-    //   reader.onload = function(evt) {
-    //         const result = csvToArray(evt.target.result);
-    //         rawData = result.data;
-    //         rawHeaders = result.headers;
-    //         alert("CSV Loaded! Now choose clusters and hit 'Expand'");
-    //     };
-    //   reader.readAsText(file);
-    // });
-
     document.getElementById('loadCsvBtn').addEventListener('click', () => {
       const url = document.getElementById('csvUrlInput').value.trim();
       d3.csv(url)
