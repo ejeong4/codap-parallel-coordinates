@@ -90,7 +90,7 @@ function renderFeatureButtons(features) {
 
   features.forEach(f => {
     const tag = document.createElement('div');
-    tag.className = 'feature-tag drag';
+    tag.className = 'feature-tag';
     tag.textContent = f;
     tag.draggable = true;
     tag.addEventListener('dragstart', (e) => {
@@ -423,7 +423,7 @@ function drawParallelCoordinatesD3(svgSelector, dataset, selectedFeatures) {
 function createLinkForSelectedFeatures() {
   const selected = selectedFeatures.filter(f => f !== null);
   if (selected.length < 2) {
-    // alert("Please select at least two features.");
+    alert("Please select at least two features.");
     return;
   }
 
