@@ -18,13 +18,13 @@
   <label>
     <h3>Automatic Clustering</h3>
     <!-- <p>Choose a dataset with multiple numerical variables for clustering</p> -->
-    <!-- <input type="file" id="csvInput" accept=".csv" />-->
+    <!-- <input type="file" id="csvInput" accept=".csv" /> -->
     </label> 
-    <!-- <div class="row">
+    <div class="row">
       <input type="url" id="csvUrlInput" placeholder="Drag Selected Data Here">
       <button id="clearCsvBtn">Clear</button>
       <button id="loadCsvBtn">Load CSV</button>
-    </div>   -->
+    </div>  
   <div>
     <p>Split the dataset into:</p>
     <div class="row">
@@ -53,9 +53,9 @@
     let dataset = [];
     let k = 2;
 
-    // document.getElementById('clearCsvBtn').addEventListener('click', () => {
-    //   document.getElementById('csvUrlInput').value = '';
-    // });
+    document.getElementById('clearCsvBtn').addEventListener('click', () => {
+      document.getElementById('csvUrlInput').value = '';
+    });
 
 
     document.querySelectorAll('.cluster-options span').forEach(span => {
@@ -83,6 +83,45 @@
     //       console.error(err);
     //     });
     // });
+
+    function handleCsvLoad(data) {
+  dataset = data;
+  rawHeaders = dataset.columns || Object.keys(data[0]);
+  rawData = data.map(row => rawHeaders.map(h => +row[h]));
+
+  if (document.getElementById('feature-buttons')) {
+    renderFeatureButtons(rawHeaders);
+  }
+
+  render();
+}
+
+
+    document.getElementById('loadCsvBtn').addEventListener('click', () => {
+  const url = document.getElementById('csvUrlInput').value.trim();
+
+  if (url.startsWith('blob:')) {
+    // Fetch blob CSV from same-origin blob URL
+    fetch(url)
+      .then(res => res.text())
+      .then(text => {
+        const data = d3.csvParse(text);
+        handleCsvLoad(data);
+      })
+      .catch(err => {
+        console.error('Blob fetch failed:', err);
+        alert('Failed to load blob URL. Make sure it is from the same origin.');
+      });
+  } else {
+    // Normal URL
+    d3.csv(url)
+      .then(data => handleCsvLoad(data))
+      .catch(err => {
+        console.error('URL fetch failed:', err);
+        alert('Failed to load CSV. Please check the link.');
+      });
+  }
+});
 
     function csvToArray(str) {
         const [headerLine, ...rows] = str.trim().split('\n');
@@ -160,17 +199,79 @@ window.addEventListener('dragleave', e => {
   document.body.classList.remove('dragging');
 });
 
-window.addEventListener('drop', e => {
-  e.preventDefault();
-  document.body.classList.remove('dragging');
+// window.addEventListener('drop', e => {
+//   e.preventDefault();
+//   document.body.classList.remove('dragging');
 
-  const text = e.dataTransfer.getData('text/plain');
-  if (text && text.startsWith("http")) {
-    loadAndRenderCsv(text.trim(), 2); // default to 2 clusters
-  } else {
-    alert("Please drag a valid CSV URL.");
-  }
-});
+//   const text = e.dataTransfer.getData('text/plain');
+//   if (text && text.startsWith("http")) {
+//     loadAndRenderCsv(text.trim(), 2); // default to 2 clusters
+//   } else {
+//     alert("Please drag a valid CSV URL.");
+//   }
+// });
+
+// window.addEventListener('drop', e => {
+//   e.preventDefault();
+//   document.body.classList.remove('dragging');
+
+//   const items = e.dataTransfer.items;
+//   if (!items || items.length === 0) {
+//     alert("No data dropped.");
+//     return;
+//   }
+
+//   // Case 1: Dragging in a CSV file or blob file
+//   for (let i = 0; i < items.length; i++) {
+//     const item = items[i];
+//     if (item.kind === 'file') {
+//       const file = item.getAsFile();
+//       if (file && file.name.endsWith(".csv")) {
+//         const reader = new FileReader();
+//         reader.onload = function(event) {
+//           const text = event.target.result;
+//           const parsed = d3.csvParse(text);
+
+//           // Filter numeric columns
+//           rawHeaders = parsed.columns.filter(col =>
+//             parsed.every(row => !isNaN(+row[col]))
+//           );
+//           rawData = parsed.map(row => rawHeaders.map(h => +row[h]));
+//           dataset = parsed;
+
+//           // Default cluster count
+//           k = 2;
+//           document.querySelectorAll('.cluster-options span').forEach(s => {
+//             s.classList.remove('selected');
+//             if (parseInt(s.dataset.k) === k) s.classList.add('selected');
+//           });
+
+//           render();
+//         };
+//         reader.readAsText(file);
+//         return;
+//       }
+//     }
+//   }
+
+//   // Case 2: Dragging a CSV link from browser (like GitHub raw CSV)
+//   for (let i = 0; i < items.length; i++) {
+//     const item = items[i];
+//     if (item.kind === 'string') {
+//       item.getAsString(text => {
+//         if (text.startsWith("http") || text.startsWith("blob:")) {
+//           alert("Please drag in the actual file instead of a blob URL.");
+//         } else {
+//           alert("Unsupported drop format.");
+//         }
+//       });
+//       return;
+//     }
+//   }
+
+//   alert("Could not load data. Try dragging in a real CSV file.");
+// });
+
 
 function loadAndRenderCsv(url, clusterCount = 2) {
   d3.csv(url)
@@ -190,6 +291,7 @@ function loadAndRenderCsv(url, clusterCount = 2) {
       alert('Failed to load CSV. Please check the link.');
     });
 }
+
 
 document.querySelectorAll('.cluster-options span').forEach(span => {
   span.onclick = () => {
@@ -341,8 +443,6 @@ function drawParallelCoordinatesD3(svgSelector, dataset, selectedFeatures, clust
     .style("font-size", "12px")
     .style("fill", "#6F6F79");
 }
-
-
 
   </script>
 </body>
