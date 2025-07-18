@@ -84,10 +84,48 @@
     //     });
     // });
 
-    function handleCsvLoad(data) {
+//     function handleCsvLoad(data) {
+//   dataset = data;
+//   rawHeaders = dataset.columns || Object.keys(data[0]);
+//   rawData = data.map(row => rawHeaders.map(h => +row[h]));
+
+//   if (document.getElementById('feature-buttons')) {
+//     renderFeatureButtons(rawHeaders);
+//   }
+
+//   render();
+// }
+
+function handleCsvLoad(data) {
   dataset = data;
+
+  // Ensure data is not empty
+  if (!dataset || dataset.length === 0) {
+    alert("The CSV is empty or could not be parsed.");
+    return;
+  }
+
   rawHeaders = dataset.columns || Object.keys(data[0]);
-  rawData = data.map(row => rawHeaders.map(h => +row[h]));
+
+  // Filter for numeric headers
+  rawHeaders = rawHeaders.filter(h =>
+    dataset.every(row => !isNaN(+row[h]))
+  );
+
+  if (rawHeaders.length === 0) {
+    alert("No numeric columns found in the CSV.");
+    return;
+  }
+
+  // Build rawData safely
+  rawData = dataset
+    .map(row => rawHeaders.map(h => +row[h]))
+    .filter(row => row.every(v => !isNaN(v)));
+
+  if (rawData.length === 0 || rawData[0].length === 0) {
+    alert("CSV must contain valid numeric rows.");
+    return;
+  }
 
   if (document.getElementById('feature-buttons')) {
     renderFeatureButtons(rawHeaders);
@@ -95,6 +133,7 @@
 
   render();
 }
+
 
 
     document.getElementById('loadCsvBtn').addEventListener('click', () => {
