@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Clustering with Parallel Coordinates</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <h2>Automatic Clustering</h2>
+  <div class="explain">
+    <img src="icons/zoom-in.svg" alt="">
+    Automatic Clustering is a way to organize information into groups, or "clusters," based on how similar the items are. </div>
+  <div class="content">
+  <label><h3>Import Data</h3>
+    <p>Choose a dataset with multiple numerical variables for clustering</p>
+    <input type="file" id="csvInput" accept=".csv" /></label>
+  <div>
+    <h3>Split the dataset into:</h3>
+    <div class="cluster-options">
+      <span data-k="2">2 clusters</span>
+      <span data-k="3">3 clusters</span>
+      <span data-k="4">4 clusters</span>
+      <span data-k="5">5 clusters</span>
+    </div>
+  </div>
+  <label>
+    <h3>Choose graph type:</h3>
+    <select id="glyphSelect">
+      <option value="parallel">
+        Parallel Coordinate
+    </option>
+    </select>
+    <button onclick="render()">Expand</button>
+  </label>
+  <div id="charts"></div>
+
+  <script>
+    let rawHeaders = [];
+    let rawData = [];
+    let k = 2;
+
+    document.querySelectorAll('.cluster-options span').forEach(span => {
+      span.onclick = () => {
+        k = parseInt(span.dataset.k);
+        document.querySelectorAll('.cluster-options span').forEach(s => s.classList.remove('selected'));
+        span.classList.add('selected');
+      }
+    });
+
+    document.getElementById('csvInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+            const result = csvToArray(evt.target.result);
+            rawData = result.data;
+            rawHeaders = result.headers;
+            alert("CSV Loaded! Now choose clusters and hit 'Expand'");
+        };
+      reader.readAsText(file);
+    });
+
+    function csvToArray(str) {
+        const [headerLine, ...rows] = str.trim().split('\n');
+        const headers = headerLine.split(',');
+        const data = rows.map(row => row.split(',').map(parseFloat));
+        return { headers, data };
+    }
+
+    function kMeans(data, k) {
+      const assignments = new Array(data.length);
+      const means = [];
+
+      for (let i = 0; i < k; i++) {
+        means.push(data[Math.floor(Math.random() * data.length)]);
+      }
+
+      let changed = true;
+      while (changed) {
+        changed = false;
+
+        for (let i = 0; i < data.length; i++) {
+          const distances = means.map(m => euclidean(data[i], m));
+          const minIndex = distances.indexOf(Math.min(...distances));
+          if (assignments[i] !== minIndex) {
+            assignments[i] = minIndex;
+            changed = true;
+          }
+        }
+
+        const sums = Array.from({ length: k }, () => Array(data[0].length).fill(0));
+        const counts = Array(k).fill(0);
+        for (let i = 0; i < data.length; i++) {
+          const cluster = assignments[i];
+          counts[cluster]++;
+          for (let j = 0; j < data[i].length; j++) {
+            sums[cluster][j] += data[i][j];
+          }
+        }
+
+        for (let i = 0; i < k; i++) {
+          if (counts[i] === 0) continue;
+          for (let j = 0; j < means[i].length; j++) {
+            means[i][j] = sums[i][j] / counts[i];
+          }
+        }
+      }
+
+      const clustered = Array.from({ length: k }, () => []);
+      for (let i = 0; i < data.length; i++) {
+        clustered[assignments[i]].push(data[i]);
+      }
+      return clustered;
+    }
+
+    function euclidean(a, b) {
+      return Math.sqrt(a.reduce((sum, val, i) => sum + (val - b[i]) ** 2, 0));
+    }
+
+function summarizeCluster(cluster, headers) {
+  return headers.map((h, i) => {
+    const values = cluster.map(d => d[i]);
+    const avg = d3.mean(values).toFixed(1);
+    return `${h}: ${avg}`;
+  }).join(" | ");
+}
+
+function render() {
+  if (!rawData.length) return alert('Please upload a CSV file first!');
+  const clusters = kMeans(rawData, k);
+
+  const container = document.getElementById('charts');
+  container.innerHTML = '';
+
+  const color = d3.scaleOrdinal(d3.schemeCategory10);
+
+  clusters.forEach((cluster, index) => {
+    if (!cluster.length) return;
+
+    const clusterWrapper = document.createElement('div');
+    clusterWrapper.style.display = 'inline-block';
+    clusterWrapper.style.margin = '20px 20px 20px 0';
+    clusterWrapper.style.verticalAlign = 'top';
+    clusterWrapper.style.textAlign = 'center';
+    clusterWrapper.style.width = 'fit-content';
+    container.appendChild(clusterWrapper);
+
+    const summaryDiv = document.createElement('div');
+    summaryDiv.innerHTML = `
+      <strong style="font-size: 14px;">Cluster ${index}</strong>
+      <span style="color: gray; font-size: 12px;">(n = ${cluster.length})</span><br>
+      <span style="font-size: 12px; color: #444;">${summarizeCluster(cluster, rawHeaders)}</span>
+    `;
+    summaryDiv.style.marginBottom = "8px";
+    summaryDiv.style.fontFamily = "Hanken Grotesk, sans-serif";
+    summaryDiv.style.paddingTop = "8px";
+    summaryDiv.style.borderTop = "1px solid #ddd";
+    summaryDiv.style.width = "100%";
+    summaryDiv.style.textAlign = "left";
+    clusterWrapper.appendChild(summaryDiv);
+
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("width", 400);
+    svg.setAttribute("height", 200);
+    svg.classList.add("cluster-svg");
+    svg.setAttribute("id", `parallel-coords-${index}`);
+    svg.style.border = "1px solid #ddd";
+    svg.style.borderRadius = "6px";
+    svg.style.background = "white";
+    clusterWrapper.appendChild(svg);
+
+    drawParallelCoordinatesD3(`#parallel-coords-${index}`, cluster, rawHeaders, index, color);
+  });
+
+
+const compareWrapper = document.createElement('div');
+compareWrapper.style.display = 'inline-block';
+compareWrapper.style.margin = '20px 0 0';
+compareWrapper.style.verticalAlign = 'top';
+compareWrapper.style.textAlign = 'center';
+compareWrapper.style.width = 'fit-content';
+container.appendChild(compareWrapper);
+
+const compareTitle = document.createElement('div');
+compareTitle.innerHTML = `
+  <strong style="font-size: 14px;">Compare All Clusters</strong>
+`;
+compareTitle.style.marginBottom = "8px";
+compareTitle.style.fontFamily = "Hanken Grotesk, sans-serif";
+compareTitle.style.borderTop = "1px solid #ddd";
+compareTitle.style.paddingTop = "8px";
+compareTitle.style.textAlign = "left";
+compareWrapper.appendChild(compareTitle);
+
+const combinedSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+combinedSvg.setAttribute("width", 400);
+combinedSvg.setAttribute("height", 200);
+combinedSvg.classList.add("cluster-svg");
+combinedSvg.setAttribute("id", `parallel-coords-combined`);
+combinedSvg.style.border = "1px solid #ddd";
+combinedSvg.style.background = "white";
+combinedSvg.style.borderRadius = "6px";
+compareWrapper.appendChild(combinedSvg);
+
+const flattened = clusters.flat();
+const clusterAssignments = clusters.flatMap((group, idx) => Array(group.length).fill(idx));
+drawParallelCoordinatesD3(`#parallel-coords-combined`, flattened, rawHeaders, clusterAssignments, color);
+
+}
+
+function drawParallelCoordinatesD3(svgSelector, dataset, selectedFeatures, clusterIndices, colorScale) {
+  const svg = d3.select(svgSelector);
+  svg.selectAll("*").remove();
+
+  const width = +svg.attr("width");
+  const height = +svg.attr("height");
+
+  const margin = { top: 30, right: 30, bottom: 20, left: 40 };
+  const innerWidth = width - margin.left - margin.right;
+  const innerHeight = height - margin.top - margin.bottom;
+
+  const dimensions = selectedFeatures;
+  if (dimensions.length < 2) return;
+
+  const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+  const y = {};
+  for (let i = 0; i < dimensions.length; i++) {
+    y[dimensions[i]] = d3.scaleLinear()
+      .domain(d3.extent(dataset, d => d[i]))
+      .range([innerHeight, 0]);
+  }
+
+  const x = d3.scalePoint().range([0, innerWidth]).domain(dimensions);
+
+  dataset.forEach((d, i) => {
+    const clusterIndex = Array.isArray(clusterIndices) ? clusterIndices[i] : clusterIndices;
+    g.append("path")
+      .datum(d)
+      .attr("d", d3.line()(dimensions.map((dim, j) => [x(dim), y[dim](d[j])])))
+      .style("fill", "none")
+      .style("stroke", colorScale(clusterIndex))
+      .style("stroke-width", 1.5)
+      .style("opacity", 0.15)
+      .on("mouseover", function () {
+        d3.select(this).style("stroke-width", 2).style("opacity", 1);
+      })
+      .on("mouseout", function () {
+        d3.select(this).style("stroke-width", 1.5).style("opacity", 0.15);
+      });
+  });
+
+  g.selectAll(".dimension")
+    .data(dimensions)
+    .enter().append("g")
+    .attr("transform", d => `translate(${x(d)})`)
+    .each(function (d) {
+      d3.select(this).call(d3.axisLeft(y[d]));
+    })
+    .append("text")
+    .style("text-anchor", "middle")
+    .attr("y", -10)
+    .text(d => d)
+    .style("font-size", "12px")
+    .style("fill", "#6F6F79");
+}
+
+  </script>
+</body>
+</html>

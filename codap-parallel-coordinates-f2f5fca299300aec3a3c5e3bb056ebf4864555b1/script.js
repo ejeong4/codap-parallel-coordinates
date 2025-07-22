@@ -5,34 +5,6 @@ let selectedFeatures = Array(5).fill(null);
 let k = 2;
 const maxFeatures = 5;
 
-// document.getElementById('clearCsvBtn').addEventListener('click', () => {
-//   document.getElementById('csvUrlInput').value = '';
-// });
-
-function resetState() {
-  rawHeaders = [];
-  rawData = [];
-  dataset = [];
-  selectedFeatures = Array(5).fill(null);
-
-  // Clear feature buttons
-  const featureButtons = document.getElementById('feature-buttons');
-  if (featureButtons) featureButtons.innerHTML = '';
-
-  // Reset drop slots
-  document.querySelectorAll('.drop-slot .drop-label').forEach(label => {
-    label.textContent = 'Drop here';
-  });
-
-  // Clear chart
-  d3.select("#parallel-coords").selectAll("*").remove();
-
-  // Clear generated CSV link
-  const linkContainer = document.getElementById("generatedLinkContainer");
-  if (linkContainer) linkContainer.innerHTML = '';
-}
-
-
 function toggleSection(id) {
   const section = document.getElementById(id);
   const arrow = document.getElementById('arrow-' + id);
@@ -49,40 +21,30 @@ function openSection(id) {
   arrow.classList.add('open');
 }
 
-// document.getElementById('loadCsvBtn').addEventListener('click', () => {
-//   const url = document.getElementById('csvUrlInput').value.trim();
-//   if (!url) return;
+document.getElementById('csvFileInput').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
 
-//   resetState(); // clear everything before loading new CSV
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    const text = event.target.result;
 
-//   d3.csv(url)
-//     .then(data => {
-//       dataset = data;
+    dataset = d3.csvParse(text);                     
+    rawHeaders = dataset.columns;                    
+    rawData = dataset.map(row => rawHeaders.map(h => +row[h]));
 
-//       const allHeaders = data.columns || Object.keys(data[0]);
+    if (document.getElementById('feature-buttons')) {
+      renderFeatureButtons(rawHeaders);
+    }
+    
 
-//       // Filter only numeric columns
-//       rawHeaders = allHeaders.filter(header =>
-//         data.some(row => {
-//           const val = row[header];
-//           return val !== "" && !isNaN(+val);
-//         })
-//       );
+    alert("Dataset loaded! Now you can use both Feature Selection and Clustering.");
+  };
+  // openSection('featureSelection');
+  // openSection('automaticClustering');
+  reader.readAsText(file);
 
-//       rawData = data.map(row => rawHeaders.map(h => +row[h]));
-
-//       if (document.getElementById('feature-buttons')) {
-//         renderFeatureButtons(rawHeaders);
-//       }
-
-//     })
-//     .catch(err => {
-//       console.error(err);
-//       alert("Failed to load CSV. Check the URL and CORS settings.");
-//     });
-// });
-
-
+});
 
 function renderFeatureButtons(features) {
   const container = document.getElementById('feature-buttons');
@@ -324,7 +286,7 @@ function summarizeCluster(cluster, headers) {
 
 
 function render() {
-  if (!rawData.length) return ;
+  if (!rawData.length) return alert('Please upload a CSV file first!');
   const clusters = kMeans(rawData, k);
 
   const container = document.getElementById('charts');
@@ -419,95 +381,3 @@ function downloadSelectedFeatures() {
   a.setAttribute("download", "selected_features.csv");
   a.click();
 }
-
-function createLinkForSelectedFeatures() {
-  const selected = selectedFeatures.filter(f => f !== null);
-  if (selected.length < 2) {
-    alert("Please select at least two features.");
-    return;
-  }
-
-  const filteredData = dataset.map(row => {
-    const newRow = {};
-    selected.forEach(f => newRow[f] = row[f]);
-    return newRow;
-  });
-
-  const csvContent = d3.csvFormat(filteredData);
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-
-  const container = document.getElementById("generatedLinkContainer");
-  container.innerHTML = `<a href="${url}" download="selected_features.csv" target="_blank">CSV Link</a>`;
-}
-
-document.getElementById("createLinkButton").addEventListener("click", createLinkForSelectedFeatures);
-
-// Handle CSV link drag-and-drop
-window.addEventListener('dragover', e => {
-  e.preventDefault();
-  document.body.classList.add('dragging');
-});
-
-window.addEventListener('dragleave', e => {
-  document.body.classList.remove('dragging');
-});
-
-window.addEventListener('drop', e => {
-  e.preventDefault();
-  document.body.classList.remove('dragging');
-
-  const url = e.dataTransfer.getData('text/plain').trim();
-  if (!url.endsWith('.csv')) {
-    return;
-  }
-
-  resetState();
-
-  d3.csv(url)
-    .then(data => {
-      dataset = data;
-
-      const allHeaders = data.columns || Object.keys(data[0]);
-
-      rawHeaders = allHeaders.filter(header =>
-        data.some(row => {
-          const val = row[header];
-          return val !== "" && !isNaN(+val);
-        })
-      );
-
-      rawData = data.map(row => rawHeaders.map(h => +row[h]));
-
-      if (document.getElementById('feature-buttons')) {
-        renderFeatureButtons(rawHeaders);
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      alert("Failed to load CSV. Check the URL and CORS settings.");
-    });
-});
-
-document.getElementById("drag-wrapper").addEventListener("dragstart", (e) => {
-  const selected = selectedFeatures.filter(f => f !== null);
-  if (selected.length < 2) {
-    alert("Select at least two features.");
-    e.preventDefault();
-    return;
-  }
-
-  const filteredData = dataset.map(row => {
-    const newRow = {};
-    selected.forEach(f => newRow[f] = row[f]);
-    return newRow;
-  });
-
-  const csvContent = d3.csvFormat(filteredData);
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-
-  e.dataTransfer.setData("text/plain", url);
-  e.dataTransfer.setData("text/uri-list", url);
-});
-
